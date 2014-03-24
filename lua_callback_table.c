@@ -8,6 +8,7 @@
 MEM_POOL callback_table_pool, callback_string_pool;
 CBENTRY** callback_table;
 
+// Hash function for our hash table
 int cbtable_hash(const char* type){
 	int acc = 0;
 	const char* p;
@@ -16,24 +17,26 @@ int cbtable_hash(const char* type){
 	return acc % LUA_CALLBACK_TABLE_SIZE;
 }
 
+// Alloc memory and initialize hash table
 void cbtable_init(){
 	callback_table_pool = mem_alloc_pool(LUA_CALLBACK_ENTRY_POOL_SIZE * sizeof(CBENTRY));
 	callback_string_pool = mem_alloc_pool(LUA_CALLBACK_STRING_POOL_SIZE);
 	callback_table = (CBENTRY**) malloc(LUA_CALLBACK_TABLE_SIZE * sizeof(CBENTRY*));
 	int i;
-	for(i = 0; i < LUA_CALLBACK_TABLE_SIZE; i++){
+	for(i = 0; i < LUA_CALLBACK_TABLE_SIZE; i++)
 		callback_table[i] = 0;
-	}
-	//memset(callback_table, 0, LUA_CALLBACK_TABLE_SIZE * sizeof(CBENTRY*));
 }
 
+// Free hash table
 void cbtable_destroy(){
 	free(callback_table);
 	callback_table = 0;
 	mem_free_pool(callback_table_pool);
+	mem_free_pool(calback_string_pool);
 	callback_table_pool = 0;
 }
 
+// Finds the string in the string_pool, or inserts it if it doesn't exist
 char* cbtable_alloc_type_string(const char* type){
 	CBENTRY* t;
 	if((t = cbtable_next(type, 0)) != 0){
@@ -44,6 +47,7 @@ char* cbtable_alloc_type_string(const char* type){
 	}
 }
 
+// Adds a callback to the table
 void cbtable_add(const char* type, const char* func){
 	int hash = cbtable_hash(type);
 	char* type_b = cbtable_alloc_type_string(type);
@@ -55,6 +59,7 @@ void cbtable_add(const char* type, const char* func){
 	callback_table[hash]->next = next;
 }
 
+// Finds the next matching callback in the table
 CBENTRY* cbtable_next(const char* type, CBENTRY* prev){
 	CBENTRY* p = 0;
 	if(prev == 0){

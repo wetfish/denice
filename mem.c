@@ -8,6 +8,7 @@
 MEM_POOL_NODE mem_pools[MAX_POOL];
 MEM_POOL next_free_pool;
 
+// initialize memory management structures
 void mem_init()
 {
     int i;
@@ -21,6 +22,7 @@ void mem_init()
     next_free_pool = mem_pools;
 }
 
+// allocate memory pool
 MEM_POOL mem_alloc_pool(int size)
 {
     MEM_POOL mpool = next_free_pool;
@@ -41,6 +43,7 @@ MEM_POOL mem_alloc_pool(int size)
     return(mpool);
 }
 
+// reset memory pool
 void mem_reset_pool(MEM_POOL mpool)
 {
     if ((mpool == NULL) || (mpool->pool == NULL))
@@ -49,6 +52,7 @@ void mem_reset_pool(MEM_POOL mpool)
     mpool->next_free = mpool->pool;
 }
 
+// free memory pool
 void mem_free_pool(MEM_POOL mpool)
 {
     if ((mpool == NULL) || (mpool->pool == NULL))
@@ -62,6 +66,7 @@ void mem_free_pool(MEM_POOL mpool)
     next_free_pool = mpool;
 }
 
+// get free space from pool
 char *mem_get_free(MEM_POOL mpool, int size)
 {
     char *ptr;

@@ -7,6 +7,7 @@
 #include "callbacks.h"
 #include "lua_callback_table.h"
 
+// Generic libircclient callback function, passes events to registered Lua callbacks
 void event_generic(irc_session_t *session, const char *event, const char *origin, const char **params, unsigned int count){
 	CBENTRY* func;
 	printf("Received '%s' event.\n", event);
@@ -27,6 +28,7 @@ void event_generic(irc_session_t *session, const char *event, const char *origin
 	}
 }
 
+// Callback for numeric events, just translates the numeric event code to a string and gives it to event_generic
 void event_numeric(irc_session_t *session, unsigned int event, const char *origin, const char **params, unsigned int count){
 	char str[16];
 	sprintf(str, "%d", event);

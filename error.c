@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "error.h"
 
+// Print formatted error and if error is fatal, terminate
 void error(int fatal, char* format, ...){
 	va_list args;
 	va_start(args, format);
