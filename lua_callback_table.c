@@ -32,7 +32,7 @@ void cbtable_destroy(){
 	free(callback_table);
 	callback_table = 0;
 	mem_free_pool(callback_table_pool);
-	mem_free_pool(calback_string_pool);
+	mem_free_pool(callback_string_pool);
 	callback_table_pool = 0;
 }
 

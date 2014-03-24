@@ -37,7 +37,6 @@ void irc_error(irc_session_t* irc_session){
 // Main function
 int main(int argc, char** argv){
 	irc_callbacks_t irc_callbacks;
-	dictionary *config;
 	char* host_str;
 	int host_len, ssl;
 	
@@ -45,15 +44,15 @@ int main(int argc, char** argv){
 		error(1, "Error: config file must be specified on comand line\n");
 	
 	// load config from ini
-	config = iniparser_load(argv[1]);
+	C = iniparser_load(argv[1]);
 	
 	// parse server config and generate a string to give to libircclient
-	ssl = iniparser_getboolean(config, "server:ssl", 0);
-	host_len = strlen(iniparser_getstring(config, "server:host", "")) + (ssl ? 1 : 0);
+	ssl = iniparser_getboolean(C, "server:ssl", 0);
+	host_len = strlen(iniparser_getstring(C, "server:host", "")) + (ssl ? 1 : 0);
 	host_str = malloc(host_len + 1);
 	host_str[0] = '#';
 	host_str[host_len] = '\0';
-	strcpy(&host_str[ssl ? 1 : 0], iniparser_getstring(config, "server:host", ""));
+	strcpy(&host_str[ssl ? 1 : 0], iniparser_getstring(C, "server:host", ""));
 	
 	// init local data structures
 	mem_init();
@@ -62,11 +61,11 @@ int main(int argc, char** argv){
 	// init mysql
 	S = mysql_init(NULL);
 	if(mysql_real_connect(S,
-	      iniparser_getstring(config, "mysql:host", "localhost"),
-	      iniparser_getstring(config, "mysql:user", "root"),
-	      iniparser_getstring(config, "mysql:pass", ""),
-	      iniparser_getstring(config, "mysql:database", ""),
-	      iniparser_getint(config, "mysql:port", 0), 0, 0) == NULL) 
+	      iniparser_getstring(C, "mysql:host", "localhost"),
+	      iniparser_getstring(C, "mysql:user", "root"),
+	      iniparser_getstring(C, "mysql:pass", ""),
+	      iniparser_getstring(C, "mysql:database", ""),
+	      iniparser_getint(C, "mysql:port", 0), 0, 0) == NULL) 
 	    error(1, "Unable to connect to mysql: %s\n", mysql_error(S));
 	
 	// init lua
@@ -77,7 +76,7 @@ int main(int argc, char** argv){
 	luaopen_string(L);
 	luaopen_math(L);
 	register_lua_functions();
-	lua_dofile(L, iniparser_getstring(config,"bot:file","/dev/null"));
+	lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"));
 
 	// init libircclient
 	memset(&irc_callbacks, 0, sizeof(irc_callbacks));
@@ -111,9 +110,9 @@ int main(int argc, char** argv){
 	// initialize irc server connection
 	if(irc_connect(I,
 				   host_str,
-				   iniparser_getint(config,"server:port",6667), 0,
-				   iniparser_getstring(config,"bot:nick","bot"),
-				   iniparser_getstring(config,"bot:user","bot"),
+				   iniparser_getint(C,"server:port",6667), 0,
+				   iniparser_getstring(C,"bot:nick","bot"),
+				   iniparser_getstring(C,"bot:user","bot"),
 				   "libircclient"
 				  ))
 		irc_error(I);
@@ -126,10 +125,11 @@ int main(int argc, char** argv){
 		irc_error(I);
 	
 	// clean up
+	mysql_close(S);
 	irc_destroy_session(I);
 	lua_close(L);
 	cbtable_destroy();
-	iniparser_freedict(config);
+	iniparser_freedict(C);
 	free(host_str);
 	return EXIT_SUCCESS;
 }

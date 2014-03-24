@@ -4,10 +4,12 @@
 #include <lua.h>
 #include <mysql.h>
 #include <libircclient.h>
+#include <iniparser.h>
 
-// global state pointers for irc, lua, and sql
+// global state pointers for irc, lua, sql, config
 irc_session_t* I;
 lua_State* L;
 MYSQL *S;
+dictionary *C;
 
 #endif
