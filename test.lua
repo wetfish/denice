@@ -1,12 +1,19 @@
+-- test for one callback on multiple events
 function message_callback(event, origin, params)
 	my_master = get_config("bot:master")
 	msg_parts = str_split(params[2], " ", 2)
 	
+	-- send to channel if channel message, reply to sender if privmsg
+	send_to = params[1]
+	if event == "PRIVMSG" then
+		send_to = origin
+	end
+	
 	if origin == my_master then
-		if msg_parts[1] == "!part" then
-			irc_msg(params[1], "ok :(")
-			irc_part(params[1])
-		elseif msg_parts[1] == "!join" then
+		if msg_parts[1] == "!part" and msg_parts[2] ~= nil then
+			irc_msg(origin, "ok :(")
+			irc_part(msg_parts[2])
+		elseif msg_parts[1] == "!join" and msg_parts[2] ~= nil then
 			irc_join(msg_parts[2])
 		elseif msg_parts[1] == "!quit" then
 			irc_quit("bye bye")
@@ -17,19 +24,28 @@ function message_callback(event, origin, params)
 			local result = sql_query_fetch("SELECT * FROM `test`")
 			for rowi,rowv in pairs(result) do
 				for coli,colv in pairs(rowv) do
-					print("result["..rowi.."]."..coli.." = "..colv)
+					--print("result["..rowi.."]."..coli.." = "..colv)
+					irc_msg(params[1], 
 				end
 			end
 		end
 	end
 end
+register_callback("PRIVMSG", "message_callback")
 register_callback("CHANNEL", "message_callback")
 
-function connect_callback(event, origin, params)
+
+-- test for multiple callbacks on one event
+function join_channels(event, origin, params)
 	irc_join("#test")
 end
+function connect_callback(event, origin, params)
+	print("Now connected to "..origin)
+end
+register_callback("CONNECT", "join_channels")
 register_callback("CONNECT", "connect_callback")
 
+-- callback for user joining a channel
 function join_callback(event, origin, params)
 	my_name = get_config("bot:nick")
 	if origin == my_name then

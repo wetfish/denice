@@ -356,6 +356,17 @@ static int l_sql_query_fetch(lua_State *L){
 	return 1;
 }
 
+// Lua function: sql_escape(string)
+static int l_sql_escape(lua_State *L){
+	size_t len = 0;
+	const char* str = luaL_checklstring(L, 1, &len);
+	char* esc = malloc(sizeof(char) * (2*len + 1));
+	mysql_real_escape_string(S, esc, str, len);
+	lua_pushstring(L, esc);
+	free(esc);
+	return 1;
+}
+
 
 /* INTERFACE REGISTRATION SECTION */
 
@@ -451,6 +462,9 @@ void register_lua_functions(lua_State* L){
 	
 	lua_pushcfunction(L, l_sql_query_fetch);
 	lua_setglobal(L, "sql_query_fetch");
+	
+	lua_pushcfunction(L, l_sql_escape);
+	lua_setglobal(L, "sql_escape");
 	
 }
 
