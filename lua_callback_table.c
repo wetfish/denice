@@ -27,6 +27,15 @@ void cbtable_init(){
 		callback_table[i] = 0;
 }
 
+// Clear all entries in the table
+void cbtable_clear(){
+	int i;
+	mem_reset_pool(callback_table_pool);
+	mem_reset_pool(callback_string_pool);
+	for(i = 0; i < LUA_CALLBACK_TABLE_SIZE; i++)
+		callback_table[i] = 0;
+}
+
 // Free hash table
 void cbtable_destroy(){
 	free(callback_table);

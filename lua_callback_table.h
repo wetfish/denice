@@ -14,6 +14,7 @@ typedef struct LUA_CALLBACK_TABLE_ENTRY {
 
 int cbtable_hash(const char* type);
 void cbtable_init();
+void cbtable_clear();
 void cbtable_destroy();
 void cbtable_add(const char* type, const char* func);
 CBENTRY* cbtable_next(const char* type, CBENTRY* prev);
