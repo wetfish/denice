@@ -1,3 +1,50 @@
+function message_callback(event, origin, params)
+	my_master = get_config("bot:master")
+	msg_parts = str_split(params[2], " ", 2)
+	
+	if origin == my_master then
+		if msg_parts[1] == "!part" then
+			irc_msg(params[1], "ok :(")
+			irc_part(params[1])
+		elseif msg_parts[1] == "!join" then
+			irc_join(msg_parts[2])
+		elseif msg_parts[1] == "!quit" then
+			irc_quit("bye bye")
+		elseif msg_parts[1] == "!rehash" then
+			irc_msg(params[1], "rehashing")
+			rehash()
+		elseif msg_parts[1] == "!testsql" then
+			local res = sql_query("SELECT * FROM `test")
+			print("query result handle "..res)
+			local row = sql_fetch_row(res)
+			for i,v in pairs(row) do
+				irc_msg(params[1], i.." -> "..v)
+			end
+		end
+	end
+end
+register_callback("CHANNEL", "message_callback")
+
+function connect_callback(event, origin, params)
+	irc_join("#rawpussy")
+end
+register_callback("CONNECT", "connect_callback")
+
+function join_callback(event, origin, params)
+	my_name = get_config("bot:nick")
+	if origin == my_name then
+		print("Now in channel "..origin)
+		irc_msg(params[1], "Hello fags")
+	else
+		irc_msg(params[1], "Hello "..origin)
+	end
+end
+register_callback("JOIN", "join_callback")
+
+
+
+
+-- split function borrowed from http://lua-users.org/wiki/SplitJoin
 function str_split(str, delim, maxNb)
     -- Eliminate bad cases...
     if string.find(str, delim) == nil then
@@ -22,37 +69,3 @@ function str_split(str, delim, maxNb)
     end
     return result
 end
-
-function message_callback(event, origin, params)
-	my_master = get_config("bot:master")
-	msg_parts = str_split(params[2], " ", 2)
-	
-	if origin == my_master then
-		if msg_parts[1] == "!part" then
-			irc_msg(params[1], "ok :(")
-			irc_part(params[1])
-		elseif msg_parts[1] == "!join" then
-			irc_join(msg_parts[2])
-		elseif msg_parts[1] == "!quit" then
-			irc_quit("bye bye")
-		elseif msg_parts[1] == "!rehash" then
-			irc_msg(params[1], "rehashing")
-			rehash()
-		end
-	end
-end
-register_callback("CHANNEL", "message_callback")
-
-function connect_callback(event, origin, params)
-	irc_join("#rawpussy")
-end
-register_callback("CONNECT", "connect_callback")
-
-function join_callback(event, origin, params)
-	my_name = get_config("bot:nick")
-	if origin == my_name then
-		print("Now in channel "..origin)
-		irc_msg(params[1], "Hello fags")
-	end
-end
-register_callback("JOIN", "join_callback")

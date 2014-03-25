@@ -4,6 +4,7 @@
 #include <mysql.h>
 #include <libircclient.h>
 #include <iniparser.h>
+#include <stdint.h>
 
 #include "globals.h"
 #include "interface.h"
@@ -250,6 +251,75 @@ static int l_irc_raw(lua_State *L){
 }
 
 
+/* MYSQL SECTION */
+
+// Lua function: sql_query(query)
+static int l_sql_query(lua_State *L){
+	size_t query_len = 0;
+	MYSQL_RES *result;
+	const char* query_str = luaL_checklstring(L, 1, &query_len);
+	printf("Executing SQL query: %s\n", query_str);
+	mysql_query(S, query_str);
+	result = mysql_store_result(S);
+	lua_pushnumber(L, (uintptr_t)result);
+	return 1;
+}
+
+// Lua function: sql_num_rows(result)
+static int l_sql_num_rows(lua_State *L){
+	uintptr_t query = luaL_checknumber(L, 1);
+	lua_pushnumber(L, mysql_num_rows((MYSQL_RES*) query));
+	return 1;
+}
+
+// Lua function: sql_fetch_row(result)
+static int l_sql_fetch_row(lua_State *L){
+	MYSQL_RES* query;
+	uintptr_t query_ptr;
+	query_ptr = (uintptr_t) luaL_checknumber(L, 1);
+	query = (MYSQL_RES*) query_ptr;
+	int num_fields = mysql_num_fields(query), i;
+	MYSQL_ROW row = mysql_fetch_row(query);
+	lua_newtable(L);
+	for(i = 0; i < num_fields; i++){
+		MYSQL_FIELD* field = mysql_fetch_field(query);
+		lua_pushstring(L, field->name);
+		lua_pushstring(L, row[i]);
+		lua_settable(L, -3);
+	}
+	return 1;
+}
+
+// Lua function: sql_num_fields(result)
+static int l_sql_num_fields(lua_State *L){
+	uintptr_t query = luaL_checknumber(L, 1);
+	lua_pushnumber(L, mysql_num_fields((MYSQL_RES*) query));
+	return 1;
+}
+
+// Lua function: sql_affected_rows()
+static int l_sql_affected_rows(lua_State *L){
+	lua_pushnumber(L, mysql_affected_rows(S));
+	return 1;
+}
+
+// Lua function: sql_errno()
+static int l_sql_errno(lua_State *L){
+	lua_pushnumber(L, mysql_errno(S));
+	return 1;
+}
+
+// Lua function: sql_error()
+static int l_sql_error(lua_State *L){
+	lua_pushstring(L, mysql_error(S));
+	return 1;
+}
+
+
+
+
+/* INTERFACE REGISTRATION SECTION */
+
 // Registers above Lua functions with the Lua state
 void register_lua_functions(lua_State* L){
 
@@ -316,6 +386,26 @@ void register_lua_functions(lua_State* L){
 	lua_pushcfunction(L, l_irc_raw);
 	lua_setglobal(L, "irc_raw");
 	
+	lua_pushcfunction(L, l_sql_query);
+	lua_setglobal(L, "sql_query");
+	
+	lua_pushcfunction(L, l_sql_num_rows);
+	lua_setglobal(L, "sql_num_rows");
+	
+	lua_pushcfunction(L, l_sql_fetch_row);
+	lua_setglobal(L, "sql_fetch_row");
+	
+	lua_pushcfunction(L, l_sql_num_fields);
+	lua_setglobal(L, "sql_num_fields");
+	
+	lua_pushcfunction(L, l_sql_affected_rows);
+	lua_setglobal(L, "sql_affected_rows");
+	
+	lua_pushcfunction(L, l_sql_errno);
+	lua_setglobal(L, "sql_errno");
+	
+	lua_pushcfunction(L, l_sql_error);
+	lua_setglobal(L, "sql_error");
 	
 }
 
