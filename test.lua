@@ -14,11 +14,11 @@ function message_callback(event, origin, params)
 			irc_msg(params[1], "rehashing")
 			rehash()
 		elseif msg_parts[1] == "!testsql" then
-			local res = sql_query("SELECT * FROM `test")
-			print("query result handle "..res)
-			local row = sql_fetch_row(res)
-			for i,v in pairs(row) do
-				irc_msg(params[1], i.." -> "..v)
+			local result = sql_query_fetch("SELECT * FROM `test`")
+			for rowi,rowv in pairs(result) do
+				for coli,colv in pairs(rowv) do
+					print("result["..rowi.."]."..coli.." = "..colv)
+				end
 			end
 		end
 	end
@@ -26,7 +26,7 @@ end
 register_callback("CHANNEL", "message_callback")
 
 function connect_callback(event, origin, params)
-	irc_join("#rawpussy")
+	irc_join("#test")
 end
 register_callback("CONNECT", "connect_callback")
 
@@ -34,7 +34,7 @@ function join_callback(event, origin, params)
 	my_name = get_config("bot:nick")
 	if origin == my_name then
 		print("Now in channel "..origin)
-		irc_msg(params[1], "Hello fags")
+		irc_msg(params[1], "Hello all")
 	else
 		irc_msg(params[1], "Hello "..origin)
 	end
