@@ -11,7 +11,7 @@ Denice requires:
 * libiniparser 3.1
 * libircclient 1.7 **compiled with SSL support**
 * libmysqlclient
-* liblua and liblualib **5.0**
+* liblua **5.2**
 
 The you can probably find the MySQL and Lua stuff in your package manager, but for the other crap
 just drop them in ./libs and make them in there, and our makefile should find them

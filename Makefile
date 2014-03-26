@@ -1,7 +1,7 @@
 # Paths and flags for Lua
-LUA_INCLUDE_DIR=/usr/include/lua50
-LUA_LIBRARY_DIR=/usr/lib
-LUA_FLAGS=-llua50 -llualib50
+LUA_INCLUDE_DIR=/usr/include/lua5.2
+LUA_LIBRARY_DIR=/usr/lib/i386-linux-gnu
+LUA_FLAGS=-llua5.2
 
 # Paths for Libircclient
 IRC_INCLUDE_DIR=libs/libircclient-1.7/include

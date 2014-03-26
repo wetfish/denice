@@ -19,12 +19,8 @@ static int l_rehash(lua_State *L){
 	int error_bool = 0;
 	// load main script in a temporary lua state to make sure it isn't broken
 	printf("Testing '%s' for errors...\n", iniparser_getstring(C,"bot:file","/dev/null"));
-	lua_State* t = lua_open();
-	luaopen_base(t);
-	luaopen_table(t);
-	luaopen_io(t);
-	luaopen_string(t);
-	luaopen_math(t);
+	lua_State* t = luaL_newstate();
+	luaL_openlibs(t);
 	register_lua_functions(t);
 	if(luaL_loadfile(t, iniparser_getstring(C,"bot:file","/dev/null"))){
 		// catch parse error
@@ -44,7 +40,9 @@ static int l_rehash(lua_State *L){
 		// if no errors were encountered, reload the file into the global state
 		printf("No errors detected, continuing...\nClearing callback table and reloading scripts...\n");
 		cbtable_clear();
-		lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"));
+		if(luaL_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"))){
+			error(1, "Unexpected error reloading scripts after successful check.\n");
+		}
 	}
 	lua_close(t);
 	lua_pushboolean(L, error_bool?0:1);

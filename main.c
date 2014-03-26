@@ -69,15 +69,13 @@ int main(int argc, char** argv){
 	    error(1, "Unable to connect to mysql: %s\n", mysql_error(S));
 	
 	// init lua
-	L = lua_open();
-	luaopen_base(L);
-	luaopen_table(L);
-	luaopen_io(L);
-	luaopen_string(L);
-	luaopen_math(L);
+	L = luaL_newstate();
+	luaL_openlibs(L);
 	register_lua_functions();
-	if(lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"))){
-		error(1, "Error processing main Lua file '%s'.\n", iniparser_getstring(C,"bot:file","/dev/null"));
+	if(luaL_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"))){
+		size_t lua_errlen = 0;
+		const char* lua_error = luaL_checklstring(L, -1, &lua_errlen);
+		error(1, "Error processing Lua script:\n%s\n", lua_error);
 	}
 
 	// init libircclient
