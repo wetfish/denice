@@ -24,7 +24,7 @@ void event_generic(irc_session_t *session, const char *event, const char *origin
 			lua_settable(L, -3);
 		}
 		if(lua_pcall(L, 3, 0, 0) != 0)
-			error(0, "Attempt to invoke Lua callback failed: %s", lua_tostring(L, -1));
+			error(0, "Attempt to invoke Lua callback failed:\n%s\n", lua_tostring(L, -1));
 	}
 }
 

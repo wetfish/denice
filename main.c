@@ -76,7 +76,9 @@ int main(int argc, char** argv){
 	luaopen_string(L);
 	luaopen_math(L);
 	register_lua_functions();
-	lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"));
+	if(lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"))){
+		error(1, "Error processing main Lua file '%s'.\n", iniparser_getstring(C,"bot:file","/dev/null"));
+	}
 
 	// init libircclient
 	memset(&irc_callbacks, 0, sizeof(irc_callbacks));

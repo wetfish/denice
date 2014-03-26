@@ -5,7 +5,9 @@
 #include <libircclient.h>
 #include <iniparser.h>
 #include <stdint.h>
+#include <lualib.h>
 
+#include "error.h"
 #include "globals.h"
 #include "interface.h"
 #include "lua_callback_table.h"
@@ -14,10 +16,52 @@
 
 // Lua function: rehash()
 static int l_rehash(lua_State *L){
-	// clear hash table and reload main script
-	printf("Clearing callback table and reloading scripts...\n");
-	cbtable_clear();
-	lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"));
+	int error_bool = 0;
+	// load main script in a temporary lua state to make sure it isn't broken
+	printf("Testing '%s' for errors...\n", iniparser_getstring(C,"bot:file","/dev/null"));
+	lua_State* t = lua_open();
+	luaopen_base(t);
+	luaopen_table(t);
+	luaopen_io(t);
+	luaopen_string(t);
+	luaopen_math(t);
+	register_lua_functions(t);
+	if(luaL_loadfile(t, iniparser_getstring(C,"bot:file","/dev/null"))){
+		// catch parse error
+		size_t lua_errlen = 0;
+		const char* lua_error = luaL_checklstring(t, -1, &lua_errlen);
+		error(0, "Error reloading Lua script:\n%s\n", lua_error);
+		error_bool = 1;
+	}
+	else if(lua_pcall(t, 0, 0, 0)){
+		// catch runtime error
+		size_t lua_errlen = 0;
+		const char* lua_error = luaL_checklstring(t, -1, &lua_errlen);
+		error(0, "Error reloading Lua script:\n%s\n", lua_error);
+		error_bool = 1;
+	}
+	else{
+		// if no errors were encountered, reload the file into the global state
+		printf("No errors detected, continuing...\nClearing callback table and reloading scripts...\n");
+		cbtable_clear();
+		lua_dofile(L, iniparser_getstring(C,"bot:file","/dev/null"));
+	}
+	lua_close(t);
+	lua_pushboolean(L, error_bool?0:1);
+	return 1;
+}
+
+// Lua function: throw_error(str,fatal) or throw_error(str)
+static int l_throw_error(lua_State *L){
+	size_t errlen = 0;
+	int fatal = 0;
+	char* errstr = 0;
+	if(lua_gettop(L) == 2){
+		fatal = luaL_checkint(L, 2);
+	}
+	errstr = (char*) luaL_checklstring(L, 1, &errlen);
+	printf("Throwing error generated in Lua script...\n");
+	error(fatal, errstr);
 	return 0;
 }
 
@@ -30,12 +74,15 @@ static int l_get_config(lua_State *L){
 }
 
 // Lua function: register_callback(event, func)
-static int l_register_callback(lua_State *L){
-	size_t type_len, func_len;
-	const char* type_str = luaL_checklstring(L, 1, &type_len);
-	const char* func_str = luaL_checklstring(L, 2, &func_len);
-	printf("Registering callback '%s' for event '%s'.\n", func_str, type_str);
-	cbtable_add(type_str, func_str);
+static int l_register_callback(lua_State *s){
+	// check that we're operating on the 'real' lua state and not a temp one
+	if(s == L){
+		size_t type_len, func_len;
+		const char* type_str = luaL_checklstring(s, 1, &type_len);
+		const char* func_str = luaL_checklstring(s, 2, &func_len);
+		printf("Registering callback '%s' for event '%s'.\n", func_str, type_str);
+		cbtable_add(type_str, func_str);
+	}
 	return 0;
 }
 
@@ -465,6 +512,9 @@ void register_lua_functions(lua_State* L){
 	
 	lua_pushcfunction(L, l_sql_escape);
 	lua_setglobal(L, "sql_escape");
+	
+	lua_pushcfunction(L, l_throw_error);
+	lua_setglobal(L, "throw_error");
 	
 }
 
