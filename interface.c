@@ -310,6 +310,15 @@ static int l_sql_query(lua_State *L){
 	return 1;
 }
 
+// Lua function: sql_fquery(query)
+static int l_sql_fquery(lua_State *L){
+	size_t query_len = 0;
+	const char* query_str = luaL_checklstring(L, 1, &query_len);
+	printf("Executing SQL query: %s\n", query_str);
+	mysql_query(S, query_str);
+	return 0;
+}
+
 // Lua function: sql_num_rows(result)
 static int l_sql_num_rows(lua_State *L){
 	uintptr_t query = luaL_checknumber(L, 1);
@@ -373,13 +382,21 @@ static int l_sql_free(lua_State *L){
 // Lua function: sql_query_fetch(query)
 static int l_sql_query_fetch(lua_State *L){
 	size_t query_len = 0;
-	MYSQL_RES *result;
+	int num_rows = 0, num_fields = 0, i, j;
+	MYSQL_RES *result = 0;
+	MYSQL_FIELD** field_array = 0;
 	const char* query_str = luaL_checklstring(L, 1, &query_len);
 	printf("Executing SQL query: %s\n", query_str);
 	mysql_query(S, query_str);
 	result = mysql_store_result(S);
-	int num_rows = mysql_num_rows(result), i, num_fields = mysql_num_fields(result), j;
-	MYSQL_FIELD** field_array = malloc(sizeof(MYSQL_FIELD*) * num_fields);
+	if(result){
+		num_rows = mysql_num_rows(result);
+		num_fields = mysql_num_fields(result);
+		field_array = malloc(sizeof(MYSQL_FIELD*) * num_fields);
+	}
+	//else{
+	//	printf("<NULL RESULT>\n");
+	//}
 	for(j = 0; j < num_fields; j++){
 		field_array[j] = mysql_fetch_field(result);
 	}
@@ -396,8 +413,10 @@ static int l_sql_query_fetch(lua_State *L){
 		}
 		lua_settable(L, -3);
 	}
-	mysql_free_result(result);
-	free(field_array);
+	if(result)
+		mysql_free_result(result);
+	if(field_array)
+		free(field_array);
 	return 1;
 }
 
@@ -483,6 +502,9 @@ void register_lua_functions(lua_State* L){
 	
 	lua_pushcfunction(L, l_sql_query);
 	lua_setglobal(L, "sql_query");
+	
+	lua_pushcfunction(L, l_sql_fquery);
+	lua_setglobal(L, "sql_fquery");
 	
 	lua_pushcfunction(L, l_sql_num_rows);
 	lua_setglobal(L, "sql_num_rows");

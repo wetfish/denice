@@ -1,0 +1,269 @@
+
+Denice's big fancy
+
+▛▀▖     ▐     ▞▀▖         ▗      ▐   ▗            ▞▀▖ ▛▀▖ ▜▘
+▙▄▘ ▞▀▖ ▜▀    ▚▄  ▞▀▖ ▙▀▖ ▄  ▛▀▖ ▜▀  ▄  ▛▀▖ ▞▀▌   ▙▄▌ ▙▄▘ ▐ 
+▌ ▌ ▌ ▌ ▐ ▖   ▖ ▌ ▌ ▖ ▌   ▐  ▙▄▘ ▐ ▖ ▐  ▌ ▌ ▚▄▌   ▌ ▌ ▌   ▐ 
+▀▀  ▝▀   ▀    ▝▀  ▝▀  ▘   ▀▘ ▌    ▀  ▀▘ ▘ ▘ ▗▄▘   ▘ ▘ ▘   ▀▘
+
+                               
+Last updated Thu Mar 27, 2014
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Table of Contents:
+
+    Section 1) The Configuration File
+
+          1.1) Configuration format
+          1.2) Core directives
+          1.3) User directives
+
+
+    Section 2) The Scripting API
+
+          2.1) Introduction
+          2.2) Callbacks
+          2.3) Bot administration functions
+          2.4) IRC functions
+          2.5) MySQL functions
+      
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Section 1: The Configuration File
+
+    1.1) Configuration format
+    
+         When launched, Denice takes one command line parameter, specifying the
+         path of a configuration file for the instance. The configuration file
+         is a standard INI file containing at least three sections. The details
+         of this specific implementation of the INI format can be found at:
+         http://ndevilla.free.fr/iniparser/html/index.html
+         
+         Only a few core configuration directives are required, but the user can
+         specify any number of directives and use them within Lua scripts. Refer
+         to Section 2.3 of this document for more information about accessing
+         configuration data from scripts.
+         
+         Specific onfiguration entries are referred to in scripts and this 
+         document using the 'section:option' format, where 'section' is the name 
+         of a section, and 'option' is the entry in that section being referred 
+         to.
+         
+         
+    1.2) Core directives
+    
+         Denice's core relies on directives found in the 'bot', 'server', and
+         'mysql' sections of the configuration INI. The required directives are
+         listed below by section:
+         
+         - [bot] section:
+           - bot:nick: Specifies the nickname to use on the IRC server
+           - bot:user: Specifies the username to use on the IRC server
+           - bot:file: Specifies the location of the main Lua file to load at
+                         runtime, as a path relative to the process's running
+                         directory
+                     
+         - [server] section:
+           - server:host: Specifies the hostname or IP address of the IRC server
+                            to connect to
+           - server:port: Specifies the port of the IRC server to connect to
+           - server:ssl:  A boolean value determining whether or not to use SSL
+                            for the IRC connection
+                     
+         - [mysql] section:
+           - mysql:host:     Specifies the hostname or IP address of the MySQL
+                               server to connect to
+           - mysql:port:     Specifies the MySQL port to connect to
+           - mysql:user:     Specifies the username to use to connect to MySQL
+           - mysql:pass:     Specifies the password to use to connect to MySQL
+           - mysql:database: Specifies the MySQL database to use
+           
+           
+    1.3) User directives
+         
+         Any number of custom sections and directives may be specified in the
+         configuration file. These options may be used in scripts as described
+         in Section 2.3 below.
+         
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Section 2: The Scripting API
+
+    2.1) Introduction
+    
+         Denice is scripted in Lua 5.2 using a number of predefined API calls.
+         Initially, the file specified in the bot:file configuration entry is
+         loaded into the application's Lua state. This file may specify other
+         files to load, using the Lua dofile() function. When loading another
+         configuration file, use the path relative to the running directory of
+         the process.
+         
+         
+    2.2) Callbacks
+    
+         Denice receives callbacks primarily from her IRC library, but error
+         events can also be handled by a callback. The following callbacks
+         from libircclient may be passed. Their documentation can be found at
+         http://www.ulduzsoft.com/libircclient/
+         
+         - CONNECT
+         - QUIT
+         - JOIN
+         - PART
+         - MODE
+         - UMODE
+         - TOPIC
+         - KICK
+         - CHANNEL
+         - PRIVMSG
+         - NOTICE
+         - UNKNOWN
+         - INVITE
+         - CTCP_REQ
+         - CTCP_REP
+         - CTCP_ACTION
+         - CHANNEL_NOTICE
+         
+         Additionally, callbacks can be registered for numeric events, as
+         specified by Section 5 of RFC 2812. These callbacks can simply be
+         registered using their numeric codes. For more information, see
+         https://tools.ietf.org/html/rfc2812#section-5
+         
+         An additional event type 'ERROR' may be generated by Denice's core.
+         
+         Callback functions must accept 3 parameters: an event type, an origin,
+         and a table of additional parameters. The event type is a string
+         containing the type of callback (from the list above or numeric);
+         the origin is a string describing the origin of the event; the params
+         table varies depending on the nature event.
+         
+         Callbacks are registered using the register_callback function described
+         below in Section 2.3.
+         
+         The below functions descriptions use standard EBNF syntax to denote
+         optional parameters.
+         
+         
+    2.3) Bot administration functions
+    
+         - rehash()
+           Reloads the bot's Lua scripts, if they pass a sanity test. Returns
+           true if successful, false if unsuccessful.
+           
+         - throw_error(error_string[, fatal])
+           Generates an ERROR event containing the message error_string and
+           terminates the application if fatal is true.
+           
+         - get_config(conf_key)
+           Returns the configuration option (from the INI) associated with the
+           conf_key as a string. Returns the empty string upon failure.
+           
+         - register_callback(event, func)
+           Adds the function described by the string func to the callback table
+           for the event described by the string event.
+           
+           
+    2.4) IRC functions
+    
+         - irc_join(channel[, key])
+           Joins the bot to the specified channel, using the key if it is given.
+           
+         - irc_part(channel)
+           Parts the bot from the specified channel.
+           
+         - irc_msg(target, message)
+           Sends the message to the target individual or channel.
+           
+         - irc_invite(nick, channel)
+           Invites the person using the given nick to the specified channel.
+           
+         - irc_names(channel)
+           Requests the list of users on the specified channel. The result will
+           be sent using a numeric reply.
+           
+         - irc_list([channel])
+           Requests the list of channels matching the given channel pattern. The
+           result will be sent using a numeric reply.
+           
+         - irc_topic(channel[, topic])
+           Requests the topic of the specified channel, or sets it to the given
+           topic if it is specified.
+           
+         - irc_cmode(channel[, mode])
+           Retrieves the modes of a channel, or sets the given mode if it is
+           specified.
+           
+         - irc_umode([mode])
+           Retrieves the bot's user modes, or sets a mode if it is specified.
+           
+         - irc_kick(nick, channel[, reason])
+           Kicks the user from the channel, using a reason if it is given.
+           
+         - irc_notice(target, message)
+           Sends the message as a notice to the target user or channel.
+           
+         - irc_ctcp_req(target, message)
+           Sends the given CTCP request message to the target.
+           
+         - irc_ctcp_rep(target, message)
+           Sends the given CTCP reply message to the target.
+           
+         - irc_nick(nick)
+           Changes the bot's nick to the given nick.
+           
+         - irc_whois(nick)
+           Performs a whois on the given user. Reply will be sent as a numeric
+           event.
+           
+         - irc_quit([msg])
+           Quits the IRC server, optionally with a quit message.
+           
+         - irc_raw(command)
+           Sends the given raw IRC command. Use with care.
+           
+           
+    2.5) MySQL functions
+    
+         - sql_query(query_string)
+           Executes the given SQL query and returns a pointer to its result. You
+           must call sql_free on the pointer to prevent a memory leak. However,
+           it may return null if the query fails, in which case you should refer
+           to sql_error or sql_errno, and not free the pointer.
+           
+         - sql_fquery(query_string)
+           Executes the given SQL query and discards its result.
+           
+         - sql_num_rows(result_pointer)
+           Returns the number of rows in the given result table.
+           
+         - sql_fetch_row(result_pointer)
+           Returns the next row from the result, as an associative array.
+           
+         - sql_num_fields(result_pointer)
+           Returns the number of columns in the given result table.
+           
+         - sql_affected_rows()
+           Returns the number of rows affected by the previous write operation.
+           
+         - sql_errno()
+           Returns the error number from the previous operation. Returns 0 if
+           there was no error.
+           
+         - sql_error()
+           Returns a string describing the error from the previous operation.
+           
+         - sql_query_fetch(query_string)
+           Returns the entire resuly table for the query, as an array of
+           associative arrays. Automatically frees the result pointer.
+           Returns an empty table if the query failed.
+           
+         - sql_escape(string)
+           Returns the given string, escaped to be safe for use in an SQL query.
+           
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+End of document.
+

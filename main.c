@@ -85,7 +85,6 @@ int main(int argc, char** argv){
 	irc_callbacks.event_quit    = event_generic;
 	irc_callbacks.event_join    = event_generic;
 	irc_callbacks.event_part    = event_generic;
-	irc_callbacks.event_part    = event_generic;
 	irc_callbacks.event_mode    = event_generic;
 	irc_callbacks.event_umode   = event_generic;
 	irc_callbacks.event_topic   = event_generic;

@@ -6,7 +6,7 @@ function join_callback(event, origin, params)
 		irc_msg(params[1], "Hello all")
 	else
 		print(origin.." joined "..params[1]..".")
-		irc_msg(params[1], "Hello "..origin)
+		--irc_msg(params[1], "Hello "..origin)
 	end
 end
 register_callback("JOIN", "join_callback")
