@@ -1,0 +1,5 @@
+dofile("lua/functions.lua")
+dofile("lua/error.lua")
+dofile("lua/msg.lua")
+dofile("lua/connect.lua")
+dofile("lua/join.lua")
