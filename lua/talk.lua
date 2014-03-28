@@ -42,7 +42,7 @@ function talk(channel, retmode)
 			local w1 = rows[1].Word1
 			local w2 = rows[1].Word2
 			local w3 = rows[1].Word3
-			local num_steps
+			local num_steps = 0
 			local hit_end = false
 			local t = NewStack()
 			t:push(w3)
@@ -106,7 +106,7 @@ function talk(channel, retmode)
 	-- take stack down
 	while #stack > 0 do
 		local w = stack:pop()
-		if phrase:len() then
+		if phrase:len() > 0 then
 			phrase = w .. " " .. phrase
 		else
 			phrase = w
