@@ -17,6 +17,11 @@
 // Lua function: rehash()
 static int l_rehash(lua_State *L){
 	int error_bool = 0;
+	
+	// reload config ini
+	iniparser_freedict(C);
+	C = iniparser_load(conf_file);
+	
 	// load main script in a temporary lua state to make sure it isn't broken
 	printf("Testing '%s' for errors...\n", iniparser_getstring(C,"bot:file","/dev/null"));
 	lua_State* t = luaL_newstate();

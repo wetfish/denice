@@ -1,4 +1,5 @@
 dofile("lua/functions.lua")
+dofile("lua/stack.lua")
 dofile("lua/error.lua")
 dofile("lua/msg.lua")
 dofile("lua/connect.lua")

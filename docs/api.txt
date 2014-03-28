@@ -150,7 +150,8 @@ Section 2: The Scripting API
     
          - rehash()
            Reloads the bot's Lua scripts, if they pass a sanity test. Returns
-           true if successful, false if unsuccessful.
+           true if successful, false if unsuccessful. Also reloads the
+           configuration file.
            
          - throw_error(error_string[, fatal])
            Generates an ERROR event containing the message error_string and

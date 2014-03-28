@@ -12,4 +12,7 @@ lua_State* L;
 MYSQL *S;
 dictionary *C;
 
+// remember our config file
+char* conf_file;
+
 #endif

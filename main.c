@@ -44,7 +44,8 @@ int main(int argc, char** argv){
 		error(1, "Error: config file must be specified on comand line\n");
 	
 	// load config from ini
-	C = iniparser_load(argv[1]);
+	conf_file = argv[1];
+	C = iniparser_load(conf_file);
 	
 	// parse server config and generate a string to give to libircclient
 	ssl = iniparser_getboolean(C, "server:ssl", 0);
