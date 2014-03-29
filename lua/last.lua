@@ -268,7 +268,7 @@ end
 
 function lastfm_compare(args,nick,channel)
 	if args ~= nil then
-		args = explode(" ",args)
+		args = str_split(args," ")
 		if args[2] == nil then
 			args[2] = nick.nick
 		end
@@ -308,7 +308,7 @@ function lastfm_myartists(args,user,channel)
 	local period = "overall"
 	local nick = nil
 	if args ~= nil then
-		for i,v in pairs(explodeLimit(" ",args,2)) do
+		for i,v in pairs(str_split_max(args," ",2)) do
 			if v:sub(1,1) == "-" then
 				period=v:sub(2)
 			else
