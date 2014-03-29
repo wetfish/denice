@@ -7,7 +7,7 @@ register_callback("CHANNEL", "quote_callback")
 
 function quote(content,channel)
 	if content == "quote" then
-		irc_msg(channel,(randQuote())
+		irc_msg(channel,randQuote())
 	elseif content:sub(0,7) == "quote *" then
 		irc_msg(channel,quoteByQuote(content:sub(8)))
 	elseif content:sub(0,13) == "quote &latest" then
