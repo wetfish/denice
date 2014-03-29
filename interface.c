@@ -308,7 +308,7 @@ static int l_sql_query(lua_State *L){
 	size_t query_len = 0;
 	MYSQL_RES *result;
 	const char* query_str = luaL_checklstring(L, 1, &query_len);
-	printf("Executing SQL query: %s\n", query_str);
+	//printf("Executing SQL query: %s\n", query_str);
 	mysql_query(S, query_str);
 	result = mysql_store_result(S);
 	lua_pushnumber(L, (uintptr_t)result);
@@ -319,7 +319,7 @@ static int l_sql_query(lua_State *L){
 static int l_sql_fquery(lua_State *L){
 	size_t query_len = 0;
 	const char* query_str = luaL_checklstring(L, 1, &query_len);
-	printf("Executing SQL query: %s\n", query_str);
+	//printf("Executing SQL query: %s\n", query_str);
 	mysql_query(S, query_str);
 	return 0;
 }
@@ -391,7 +391,7 @@ static int l_sql_query_fetch(lua_State *L){
 	MYSQL_RES *result = 0;
 	MYSQL_FIELD** field_array = 0;
 	const char* query_str = luaL_checklstring(L, 1, &query_len);
-	printf("Executing SQL query: %s\n", query_str);
+	//printf("Executing SQL query: %s\n", query_str);
 	mysql_query(S, query_str);
 	result = mysql_store_result(S);
 	if(result){
