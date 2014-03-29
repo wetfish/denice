@@ -1,11 +1,12 @@
 function quote_callback(event, origin, params)
-	if params[2]:sub(0,8) == "!quote" then
-		quote(params[2]:sub(9), params[1])
+	if params[2]:sub(0,6) == "!quote" then
+		quote(params[2]:sub(2), params[1])
 	end
 end
 register_callback("CHANNEL", "quote_callback")
 
 function quote(content,channel)
+	print("quote("..content..","..channel..")")
 	if content == "quote" then
 		irc_msg(channel,randQuote())
 	elseif content:sub(0,7) == "quote *" then
