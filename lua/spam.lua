@@ -47,7 +47,9 @@ function bigrainbow(word,user,target)
 	local f = io.open("/tmp/denice_rainbow")
 	repeat 
 		local buffer = f:read("*line")
-		irc_msg(target,buffer or "lol error")
+		if buffer ~= nil then
+			irc_msg(target,buffer)
+		end
 	until buffer == nil
 	f:close()
 end
@@ -61,8 +63,10 @@ function biggerrainbow(word,user,target)
         f:close()
         local f = io.open("/tmp/denice_rainbow")
         repeat
-                local buffer = f:read("*line")
-                irc_msg(target,buffer or "lol error")
+            local buffer = f:read("*line")
+            if buffer ~= nil then
+				irc_msg(target,buffer)
+			end
         until buffer == nil
         f:close()
 end
