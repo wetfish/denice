@@ -16,7 +16,7 @@ register_callback("CHANNEL", "spam_callback")
 function spam(word,user,target)
 	local buffer,buffer2 = "",""
 	while buffer2:len() < 400 do
-		for i,v in pairs(explode(" ",word)) do
+		for i,v in pairs(str_split(word," ")) do
 			local c1,c2 = math.random(0,15),math.random(0,15)
 			while c1==c2 do
 				c2 = math.random(0,15)
