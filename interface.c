@@ -324,6 +324,12 @@ static int l_sql_fquery(lua_State *L){
 	return 0;
 }
 
+// Lua function: sql_insert_id()
+static int l_sql_insert_id(lua_State *L){
+	lua_pushnumber(L, mysql_insert_id(S));
+	return 1;
+}
+
 // Lua function: sql_num_rows(result)
 static int l_sql_num_rows(lua_State *L){
 	uintptr_t query = luaL_checknumber(L, 1);
@@ -510,6 +516,9 @@ void register_lua_functions(lua_State* L){
 	
 	lua_pushcfunction(L, l_sql_fquery);
 	lua_setglobal(L, "sql_fquery");
+	
+	lua_pushcfunction(L, l_sql_insert_id);
+	lua_setglobal(L, "sql_insert_id");
 	
 	lua_pushcfunction(L, l_sql_num_rows);
 	lua_setglobal(L, "sql_num_rows");

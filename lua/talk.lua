@@ -1,3 +1,4 @@
+-- parses incoming messages to populate dictionary
 function talk_parse(event, origin, params)
 	local word1,word2
 	for i,word in pairs(str_split(params[2]," ")) do
@@ -19,10 +20,12 @@ function talk_parse(event, origin, params)
 end
 register_callback("CHANNEL", "talk_parse")
 
+-- operates on tree node and state table to help generate text
 function extend_tree(working_node, data_table)
 	local w1 = working_node.parent.value
 	local w2 = working_node.value
 	
+	-- if we reached max depth, stop
 	if working_node.depth + 1 > data_table.max_depth then
 		if working_node.depth > data_table.best_depth then
 			data_table.best_depth = working_node.depth
@@ -31,15 +34,18 @@ function extend_tree(working_node, data_table)
 		return
 	end
 	
+	-- if we reached max entries, stop
 	if #(data_table.end_nodes)+1 > data_table.max_entries then
 		return
 	end
 	
+	-- attempt to extend phrase
 	local rows = sql_query_fetch(
 		"SELECT `Index`,`Word3` FROM `dictionary` WHERE `Word1` = '"..sql_escape(w1).."' "..
 		"AND `Word2` = '"..sql_escape(w2).."' ORDER BY RAND() LIMIT 0,2"
 	)
 
+	-- 2 options (recursive magic!)
 	if #rows > 1 and data_table.hit_nodes[rows[2].Index] == nil then
 		local new_node = {subnodes={},parent=working_node,value=rows[2].Word3,depth=working_node.depth+1}
 		working_node.subnodes[#(working_node.subnodes)+1] = new_node
@@ -47,11 +53,14 @@ function extend_tree(working_node, data_table)
 		extend_tree(new_node, data_table)
 	end
 	
+	-- at least 1 option (recursive magic!)
 	if #rows > 0 and data_table.hit_nodes[rows[1].Index] == nil then
 		local new_node = {subnodes={},parent=working_node,value=rows[1].Word3,depth=working_node.depth+1}
 		working_node.subnodes[#(working_node.subnodes)+1] = new_node
 		data_table.hit_nodes[rows[1].Index] = true
 		extend_tree(new_node, data_table)
+		
+	-- found nothing
 	else
 		if working_node.depth > data_table.best_depth * .75 then
 			data_table.best_depth = working_node.depth
@@ -60,6 +69,7 @@ function extend_tree(working_node, data_table)
 	end
 end
 
+-- collapses a run of the tree into a phrase
 function climb_tree(leaf)
 	local phrase = ""
 	while leaf ~= nil do
@@ -75,19 +85,23 @@ function climb_tree(leaf)
 	return phrase
 end
 
+-- generates text and either returns it or sends it to the channel
 function talk(channel, retmode)
-	local word1,word2,word3
-	local stack = NewStack()
 	local phrase = ""
-	local iterations = 0
-	local done = false
-	local done2 = false
-	
-	local data_table = {hit_nodes={}, node_count=0, end_nodes={}, max_depth=35, best_depth=0, max_entries=10}
 	local working_node
 	local root_node
 	
-	-- create initial run
+	-- parameters for building the tree
+	local data_table = {
+		hit_nodes={},  -- track indices already used to prevent repeats/loops
+		node_count=0,  -- count nodes in tree
+		end_nodes={},  -- track leaves representing complete strings
+		max_depth=35,  -- maximum word count
+		best_depth=0,  -- current top word count
+		max_entries=10 -- maximum number of leaves to complete before stopping
+	}
+	
+	-- initial seed
 	local rows = sql_query_fetch("SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` ORDER BY RAND() LIMIT 0,1")
 	local w1 = rows[1].Word1
 	local w2 = rows[1].Word2
@@ -98,8 +112,10 @@ function talk(channel, retmode)
 	t:push(w3)
 	t:push(w2)
 	t:push(w1)
-	-- attempt to build backward
-	while not hit_end and num_steps < 100 do
+	
+	-- attempt to build backward (use temporary stack)
+	-- maybe we should throw out the content of the stack and attempt to build the tree from the first (last) 2 entries we find
+	while not hit_end and num_steps < data_table.max_depth do
 		local _w2 = t:pop()
 		local _w3 = t:pop()
 		t:push(_w3)
@@ -116,21 +132,23 @@ function talk(channel, retmode)
 		end
 		num_steps = num_steps + 1
 	end
-	-- push the contents of temp stack into main tree in reverse order
+	
+	-- add the contents of temp stack into main tree in reverse order
 	root_node = {subnodes={},parent=nil,value=nil,depth=0}
 	working_node = root_node
-	tree_depth = 0
 	while #t > 0 do
 		new_node = {subnodes={},parent=working_node,value=t:pop(),depth=working_node.depth+1}
 		working_node.subnodes[#(working_node.subnodes)+1] = new_node
 		working_node = new_node
-		tree_depth = tree_depth + 1
 	end
+	
+	-- build tree down from end of initial run
 	extend_tree(working_node, data_table)
 	
+	-- select random leaf and collapse the run into a phrase
 	phrase = climb_tree(data_table.end_nodes[math.random(1,#(data_table.end_nodes))])
 
-	
+	-- additional processing for ctcp actions
 	local isAction=false
 	if phrase:sub(0,8)=="ACTION " then
 		isAction=true
@@ -139,6 +157,8 @@ function talk(channel, retmode)
 	if isAction then
 		phrase = ""..phrase..""
 	end
+	
+	-- return or send
 	if retmode == nil then
 		irc_msg(channel,phrase)
 	else

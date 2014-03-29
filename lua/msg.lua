@@ -7,6 +7,11 @@ function message_callback(event, origin, params)
 	send_to = params[1]
 	if event == "PRIVMSG" then
 		send_to = origin
+	else
+		-- reply to channel messages with probability from config
+		if math.random(1, 100) < get_config("bot:talk_rate")*100 then
+			talk(send_to)
+		end
 	end
 	
 	if msg_parts[1] == "!testtalk" then

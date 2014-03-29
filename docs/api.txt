@@ -248,6 +248,9 @@ Section 2: The Scripting API
          - sql_affected_rows()
            Returns the number of rows affected by the previous write operation.
            
+         - sql_insert_id()
+           Returns the value of the AUTO_INCREMENT row set in the last insert.
+           
          - sql_errno()
            Returns the error number from the previous operation. Returns 0 if
            there was no error.
