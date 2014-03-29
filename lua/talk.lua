@@ -5,11 +5,10 @@ function talk_parse(event, origin, params)
 		if word ~= nil then
 			if word1 ~= nil then
 				if word2 ~= nil then
-					local q=sql_query(
+					sql_fquery(
 						"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
 						"VALUES('"..sql_escape(word2).."','"..sql_escape(word1).."','"..sql_escape(word).."','"..os.time().."')"
 					)
-					sql_free(q)
 				end
 				word2 = word1		
 			end
@@ -103,6 +102,11 @@ function talk(channel, retmode)
 	
 	-- initial seed
 	local rows = sql_query_fetch("SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` ORDER BY RAND() LIMIT 0,1")
+
+	if #rows < 1 then
+		return nil
+	end
+
 	local w1 = rows[1].Word1
 	local w2 = rows[1].Word2
 	local w3 = rows[1].Word3
