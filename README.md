@@ -7,11 +7,15 @@ Jakncoke has defeated me in my ass with a carton of milk for 2.30. Fucking ripof
 libraries
 ======
 
-Denice requires:
+Denice (core) requires:
 * libiniparser 3.1
 * libircclient 1.7 **compiled with SSL support**
 * libmysqlclient
 * liblua **5.2**
+
+Additionally, the scripts require:
+* luasocket 3.0 rc1
+* luaxml
 
 The you can probably find the MySQL and Lua stuff in your package manager, but for the other crap
 just drop them in ./libs and make them in there, and our makefile should find them

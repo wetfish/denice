@@ -34,7 +34,7 @@ function rainbow(word,user,target)
 	local f = io.open("/tmp/denice_rainbow")
 	local buffer = f:read("*line")
 	f:close()
-	irc_msg(target,buffer)
+	irc_msg(target,buffer or "lol error")
 end
 
 function bigrainbow(word,user,target)
@@ -47,7 +47,7 @@ function bigrainbow(word,user,target)
 	local f = io.open("/tmp/denice_rainbow")
 	repeat 
 		local buffer = f:read("*line")
-		irc_msg(target,buffer)
+		irc_msg(target,buffer or "lol error")
 	until buffer == nil
 	f:close()
 end
@@ -62,7 +62,7 @@ function biggerrainbow(word,user,target)
         local f = io.open("/tmp/denice_rainbow")
         repeat
                 local buffer = f:read("*line")
-                irc_msg(target,buffer)
+                irc_msg(target,buffer or "lol error")
         until buffer == nil
         f:close()
 end
