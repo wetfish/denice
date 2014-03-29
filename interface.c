@@ -31,14 +31,14 @@ static int l_rehash(lua_State *L){
 		// catch parse error
 		size_t lua_errlen = 0;
 		const char* lua_error = luaL_checklstring(t, -1, &lua_errlen);
-		error(0, "Error reloading Lua script:\n%s\n", lua_error);
+		error(0, "Parse error reloading Lua script:\n%s\n", lua_error);
 		error_bool = 1;
 	}
 	else if(lua_pcall(t, 0, 0, 0)){
 		// catch runtime error
 		size_t lua_errlen = 0;
 		const char* lua_error = luaL_checklstring(t, -1, &lua_errlen);
-		error(0, "Error reloading Lua script:\n%s\n", lua_error);
+		error(0, "Runtime error reloading Lua script:\n%s\n", lua_error);
 		error_bool = 1;
 	}
 	else{

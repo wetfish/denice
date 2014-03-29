@@ -27,8 +27,6 @@ function spam(word,user,target)
 	irc_msg(target,buffer2:gsub("^%s*(.-)%s*$","%1"))
 end
 
-bot_addHook("spam",spam)
-
 function rainbow(word,user,target)
 	local f = io.popen("toilet -f term -F gay --irc > /tmp/denice_rainbow","w")
 	f:write(word)

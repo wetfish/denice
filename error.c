@@ -25,6 +25,7 @@ void error(int fatal, char* format, ...){
 		if(str[strlen(str)-1] == '\n')
 			str[strlen(str)-1] = '\0';
 		event_generic(I, "ERROR", "<ERROR>", strp, 1);
+		free(strp)
 	}
 	
 }
