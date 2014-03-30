@@ -1,6 +1,6 @@
 function weather_callback(event, origin, params)
 	local msg_parts = str_split_max(params[2], " ",2)
-	if msg_parts[1] == "!weather" do
+	if msg_parts[1] == "!weather" then
 		weather(msg_parts[2], origin, params[1])
 	end
 end
