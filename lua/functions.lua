@@ -39,3 +39,7 @@ function getNodes(t,nodeName,first)
         return returnNodes
 end
 
+-- trim leading or trailing spaces
+function cleanSpace(s)
+	return s:gsub("^ +",""):gsub(" +$","")
+end

@@ -14,7 +14,7 @@ function message_callback(event, origin, params)
 		end
 	end
 	
-	if msg_parts[1] == "!testtalk" then
+	if msg_parts[1] == "!talk" then
 		talk(send_to)
 	end
 	
