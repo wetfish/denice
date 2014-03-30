@@ -350,7 +350,7 @@ static int l_sql_fetch_row(lua_State *L){
 	else{
 		int num_fields = mysql_num_fields(query), i;
 		MYSQL_FIELD** field_array = malloc(sizeof(MYSQL_FIELD*) * num_fields);
-		mysql_field_seek(0);
+		mysql_field_seek(query,0);
 		for(i = 0; i < num_fields; i++){
 			field_array[i] = mysql_fetch_field(query);
 		}
@@ -359,7 +359,7 @@ static int l_sql_fetch_row(lua_State *L){
 		for(i = 0; i < num_fields; i++){
 			MYSQL_FIELD* field = field_array[i];
 			if(field == 0 || row == 0){
-				fprintf(stderr, "error: found null stuff in sql result: field=%d, row=%d\n", field, row);
+				fprintf(stderr, "error: found null stuff in sql result: field=%d, row=%d\n", (int)field, (int)row);
 				break;
 			}
 			else{
