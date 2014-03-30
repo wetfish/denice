@@ -343,9 +343,10 @@ static int l_sql_fetch_row(lua_State *L){
 	uintptr_t query_ptr;
 	query_ptr = (uintptr_t) luaL_checknumber(L, 1);
 	query = (MYSQL_RES*) query_ptr;
-	if(query == 0)
+	if(query == 0){
 		fprintf(stderr, "warning: called sql_fetch_row on null pointer\n");
 		lua_newtable(L);
+	}
 	else{
 		int num_fields = mysql_num_fields(query), i;
 		MYSQL_ROW row = mysql_fetch_row(query);
