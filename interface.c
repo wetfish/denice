@@ -345,7 +345,7 @@ static int l_sql_fetch_row(lua_State *L){
 	query = (MYSQL_RES*) query_ptr;
 	if(query == 0){
 		fprintf(stderr, "warning: called sql_fetch_row on null pointer\n");
-		lua_newtable(L);
+		lua_pushnil(L);
 	}
 	else{
 		int num_fields = mysql_num_fields(query), i;
@@ -358,8 +358,8 @@ static int l_sql_fetch_row(lua_State *L){
 		lua_newtable(L);
 		for(i = 0; i < num_fields; i++){
 			MYSQL_FIELD* field = field_array[i];
-			if(field == 0 || row == 0){
-				fprintf(stderr, "error: found null stuff in sql result: field=%d, row=%d\n", (int)field, (int)row);
+			if(row == 0){
+				lua_pushnil(L);
 				break;
 			}
 			else{
