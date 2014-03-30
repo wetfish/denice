@@ -90,7 +90,7 @@ function lastfm_exec(method,params)
 	end
 	s = s.."&api_key="..lastfm_apikey
 	s = s.."&raw=true"
-	local http = require("http")
+	local http = require("socket.http")
 	local b = http.request(s)
 	if b ~= nil then
 		local t = xml.eval(b)
