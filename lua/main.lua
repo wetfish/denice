@@ -6,6 +6,7 @@ end
 add_lib_dir("libs/LuaXml")
 add_lib_dir("libs/luasocket")
 add_lib_dir("libs/json")
+add_lib_dir("libs/lpeg-0.12")
 
 dofile("lua/functions.lua")
 dofile("lua/stack.lua")
