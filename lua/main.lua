@@ -4,7 +4,7 @@ function add_lib_dir(name)
 end
 
 add_lib_dir("libs/LuaXml")
-add_lib_dir("libs/luasocket-3.0-rc1/src")
+add_lib_dir("libs/luasocket")
 add_lib_dir("libs/json")
 
 dofile("lua/functions.lua")
