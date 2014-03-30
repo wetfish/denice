@@ -386,7 +386,10 @@ static int l_sql_free(lua_State *L){
 	uintptr_t query_ptr;
 	query_ptr = (uintptr_t) luaL_checknumber(L, 1);
 	query = (MYSQL_RES*) query_ptr;
-	mysql_free_result(query);
+	if(query != 0)
+		mysql_free_result(query);
+	else
+		error(0,"warning: called sql_free on a null pointer\n");
 	return 0;
 }
 
