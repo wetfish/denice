@@ -16,7 +16,7 @@ Denice (core) requires:
 Additionally, the scripts require some Lua modules:
 * luasocket 3.0 rc1
 * luaxml
-* json4lua
+* luajson (also depends on lpeg)
 
 The you can probably find the MySQL and Lua stuff in your package manager, but for the other crap
 just drop them in ./libs and make them in there, and our makefile should find them

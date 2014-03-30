@@ -26,7 +26,7 @@ void event_generic(irc_session_t *session, const char *event, const char *origin
 		if(lua_pcall(L, 3, 0, 0) != 0){
 		    // catch ERROR events so we don't make an infinite loop
 			if(strcmp(event, "ERROR")){
-				error(0, "Attempt to invoke Lua callback failed:\n%s\n", lua_tostring(L, -1));
+				error(0, "Attempt to invoke Lua '%s' callback failed:\n%s\n", func->func ,lua_tostring(L, -1));
 			}
 			else{
 				fprintf(stderr, "Error calling error callback!\n%s\n", lua_tostring(L,-1));
