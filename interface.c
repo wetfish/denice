@@ -350,7 +350,7 @@ static int l_sql_fetch_row(lua_State *L){
 	else{
 		int num_fields = mysql_num_fields(query), i;
 		MYSQL_FIELD** field_array = malloc(sizeof(MYSQL_FIELD*) * num_fields);
-		fprintf(stderr, "debug: have %d fields in result\n", num_fields)
+		fprintf(stderr, "debug: have %d fields in result\n", num_fields);
 		for(i = 0; i < num_fields; i++){
 			field_array[i] = mysql_fetch_field(query);
 			fprintf(stderr, "debug: set field %d to %d (%s)\n", i, field_array[i], field_array[i]?field_array[i]->name:"NULL");
