@@ -349,10 +349,14 @@ static int l_sql_fetch_row(lua_State *L){
 	}
 	else{
 		int num_fields = mysql_num_fields(query), i;
+		MYSQL_FIELD** field_array = malloc(sizeof(MYSQL_FIELD*) * num_fields);
+		for(i = 0; i < num_fields; i++){
+			field_array[i] = mysql_fetch_field(query);
+		}
 		MYSQL_ROW row = mysql_fetch_row(query);
 		lua_newtable(L);
 		for(i = 0; i < num_fields; i++){
-			MYSQL_FIELD* field = mysql_fetch_field(query);
+			MYSQL_FIELD* field = field_array[i];
 			if(field == 0 || row == 0){
 				fprintf(stderr, "error: found null stuff in sql result: field=%d, row=%d\n", field, row);
 				break;
