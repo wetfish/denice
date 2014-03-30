@@ -354,7 +354,7 @@ static int l_sql_fetch_row(lua_State *L){
 		for(i = 0; i < num_fields; i++){
 			MYSQL_FIELD* field = mysql_fetch_field(query);
 			if(field == 0 || row == 0){
-				fprintf(stderr, "error: found null stuff in sql result\n");
+				fprintf(stderr, "error: found null stuff in sql result: field=%d, row=%d\n", field, row);
 				break;
 			}
 			else{
