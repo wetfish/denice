@@ -6,26 +6,9 @@ function weather_callback(event, origin, params)
 end
 register_callback("CHANNEL", "weather_callback")
 
-function getNodes(t,nodeName,first)
-        local returnNodes = {}
-        for i,v in pairs(t) do
-                if type(v) == "table" and v[0] == nodeName then
-                        if first then
-                                if type(v) == "table" then
-                                        v.getNodes = getNodes
-                                end
-                                return v
-                        end
-                        table.insert(returnNodes,v)
-                end
-        end
-        return returnNodes
-end
-
 function weather(zip,user,channel)
-    	local http = require("socket.http")
+    local http = require("socket.http")
 	local json = require('json')
-	xml = require('LuaXml')
 
 	local metachar = {b=string.char(2),o=string.char(15),a=string.char(1)}
 

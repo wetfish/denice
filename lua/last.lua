@@ -89,7 +89,6 @@ function lastfm_exec(method,params)
 	s = s.."&api_key="..lastfm_apikey
 	s = s.."&raw=true"
 	local http = require("socket.http")
-	local xml = require("LuaXml")
 	local b = http.request(s)
 	
 	if b ~= nil then

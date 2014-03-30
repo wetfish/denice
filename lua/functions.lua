@@ -1,3 +1,6 @@
+-- global variable for xml lib
+xml = require('LuaXml')
+
 -- split function borrowed from http://lua-users.org/wiki/SplitJoin
 function str_split(str, sep)
     local sep, fields = sep or ":", {}
@@ -6,6 +9,7 @@ function str_split(str, sep)
     return fields
 end
 
+-- merge all but first (max-1) entries in table returned by str_split
 function str_split_max(str, sep, max)
 	local t1 = {}
 	for i,v in pairs(str_split(str, sep)) do
@@ -17,3 +21,21 @@ function str_split_max(str, sep, max)
 	end
 	return t1
 end
+
+-- helper function for xml parsing
+function getNodes(t,nodeName,first)
+        local returnNodes = {}
+        for i,v in pairs(t) do
+                if type(v) == "table" and v[0] == nodeName then
+                        if first then
+                                if type(v) == "table" then
+                                        v.getNodes = getNodes
+                                end
+                                return v
+                        end
+                        table.insert(returnNodes,v)
+                end
+        end
+        return returnNodes
+end
+
