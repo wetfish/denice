@@ -6,10 +6,28 @@ function weather_callback(event, origin, params)
 end
 register_callback("CHANNEL", "weather_callback")
 
+function getNodes(t,nodeName,first)
+        local returnNodes = {}
+        for i,v in pairs(t) do
+                if type(v) == "table" and v[0] == nodeName then
+                        if first then
+                                if type(v) == "table" then
+                                        v.getNodes = getNodes
+                                end
+                                return v
+                        end
+                        table.insert(returnNodes,v)
+                end
+        end
+        return returnNodes
+end
+
 function weather(zip,user,channel)
-    local http = require("socket.http")
+    	local http = require("socket.http")
 	local json = require('json')
-	local xml = require('LuaXml')
+	xml = require('LuaXml')
+
+	local metachar = {b=string.char(2),o=string.char(15),a=string.char(1)}
 
 	local unit_req = "u=f"
 	if zip:find("-c") ~= nil then
@@ -25,13 +43,13 @@ function weather(zip,user,channel)
 		return
 	end
 	local woeid = woe_t.places.place[1].woeid;
-	
+
 	local weather_s = "http://weather.yahooapis.com/forecastrss?w="..woeid.."&"..unit_req
 	local weather_b = http.request(weather_s)
 	local weather_t = xml.eval(weather_b)
 	weather_t = weather_t[1]
 	weather_t.getNodes = getNodes
-	
+
 	local dayMap={Sun='Sunday',Mon='Monday',Tue='Tuesday',Wed='Wednesday',
 		Thu='Thursday',Fri='Friday',Sat='Saturday'}
 	local loc = weather_t:getNodes("yweather:location")[1]
@@ -72,5 +90,7 @@ function weather(zip,user,channel)
 			break
 		end
 	end
-	irc_msg(channel,r)
+	if r ~= nil then
+		irc_msg(channel,r)
+	end
 end
