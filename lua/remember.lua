@@ -1,8 +1,10 @@
 function remember_callback(event, origin, params)
 	local msg_parts = str_split_max(params[2], " ",2)
 	if msg_parts[1] == "!remember" then
+		print("got !remember")
 		remember(msg_parts[2], origin, params[1])
 	elseif msg_parts[1] == "!forget" then
+		print("got !forget")
 		forget(msg_parts[2], origin, params[1])
 	end
 end
