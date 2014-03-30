@@ -1,5 +1,11 @@
-package.path = "libs/LuaXml/?.lua;libs/luasocket-3.0-rc1/src/?.lua"..(package.path or "")
-package.cpath = "libs/LuaXml/?.so;libs/luasocket-3.0-rc1/src/?.so"..(package.cpath or "")
+function add_lib_dir(name)
+	package.path = name.."/?.lua;"..(package.path or "")
+	package.cpath = name.."/?.so;"..(package.cpath or "")
+end
+
+add_lib_dir("libs/LuaXml")
+add_lib_dir("libs/luasocket-3.0-rc1/src")
+add_lib_dir("libs/json")
 
 dofile("lua/functions.lua")
 dofile("lua/stack.lua")
