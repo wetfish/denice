@@ -22,6 +22,9 @@ function remember(s,w,t)
 	if s == nil or not validReq(s) then
 		print("printing list of things i remember")
 		local cur = sql_query("SELECT DISTINCT `Title` FROM `remember` ORDER BY `Title` ASC")
+		if sql_errno() != 0 then
+			print(sql_error())
+		end
 		print("cur="..cur)
 		local outstr = "I know about: "
 		while true do
