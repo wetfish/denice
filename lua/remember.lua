@@ -16,8 +16,11 @@ function validReq(s)
 end
 
 function remember(s,w,t)
+	print("entering remember function")
 	if s == nil or not validReq(s) then
+		print("printing list of things i remember")
 		local cur = sql_query("SELECT DISTINCT `Title` FROM `remember` ORDER BY `Title` ASC")
+		print("cur="..cur)
 		local outstr = "I know about: "
 		while true do
 			local row = sql_fetch_row(cur)
@@ -28,6 +31,7 @@ function remember(s,w,t)
 				outstr = ""
 			end
 		end
+		print("done with loop")
 		sql_free(cur)
 		outstr=outstr:sub(1,-2)
 		irc_msg(t,outstr)
@@ -35,6 +39,7 @@ function remember(s,w,t)
 	end
 	local indexOfEquals = s:find("=")
 	if indexOfEquals ~= nil then
+		print("storing a memory")
 		local title = s:sub(1,indexOfEquals-1)
 		title = cleanSpace(title)
 		local content = s:sub(indexOfEquals+1)
@@ -42,8 +47,10 @@ function remember(s,w,t)
 		irc_msg(t, w..": I'll remember that '"..title.."' is '"..content.."' :)")
 		sql_fquery("INSERT INTO `remember` (`Title`,`Content`) VALUES ('"..sql_escape(title).."','"..sql_escape(content).."')")
 	else
+		print("trying to remember")
 		local inc=0
 		local cur = sql_query("SELECT * FROM `remember` WHERE `Title` LIKE '%"..sql_escape(cleanSpace(s)).."%'")
+		print("query executed, cur="..cur)
 		while true do
 			local row = sql_fetch_row(cur)
 			if row == nil then break end
