@@ -118,8 +118,8 @@ static int l_irc_msg(lua_State *L){
 	size_t target_len = 0, message_len = 0;
 	const char* target_str  = luaL_checklstring(L, 1, &target_len);
 	const char* message_str = luaL_checklstring(L, 2, &message_len);
-	printf("Sending message to %s: '%s'.\n", target_str, message_str);
 	irc_cmd_msg(I, target_str, message_str);
+	printf("Sending message of length %d to %s: '%s'.\n", message_len, target_str, message_str);
 	return 0;
 }
 
