@@ -59,8 +59,13 @@ function biggerrainbow(word,user,target)
         f:write(word)
         f:close()
         local f = io.open("/tmp/denice_rainbow")
+        local lc = 0
         for line in f:lines() do
 			irc_msg(target,line)
+			lc = lc + 1
+			if lc % 5 == 5 then
+				os.execute("sleep 0.1s")
+			end
 		end
         f:close()
 end
