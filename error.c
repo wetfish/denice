@@ -9,7 +9,10 @@
 void irc_error(irc_session_t* irc_session, int fatal){
 	int err = irc_errno(irc_session);
 	const char* errstr = irc_strerror(err);
-	error(fatal, "IRC error: %s (%d)\n", errstr, err);
+	fprintf(stderr,"IRC error: %s (%d)\n", errstr, err);
+	if(fatal){
+		fprintf(stderr, "Fatal error... Exiting.\n");
+	}
 }
 
 // Print formatted error and if error is fatal, terminate
