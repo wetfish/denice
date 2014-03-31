@@ -27,13 +27,6 @@
 #include "callbacks.h"
 #include "interface.h"
 
-// Handler for libircclient errors
-void irc_error(irc_session_t* irc_session){
-	int err = irc_errno(irc_session);
-	const char* errstr = irc_strerror(err);
-	error(1, "irc error: %s (%d)\n", errstr, err);
-}
-
 // Main function
 int main(int argc, char** argv){
 	irc_callbacks_t irc_callbacks;
@@ -115,14 +108,14 @@ int main(int argc, char** argv){
 				   iniparser_getstring(C,"bot:user","bot"),
 				   "libircclient"
 				  ))
-		irc_error(I);
+		irc_error(I,1);
 	
 	// not sure why we need to sleep here, but if we don't, we can't connect
 	sleep(1);
 	
 	// run the irc client loop
 	if(irc_run(I))
-		irc_error(I);
+		irc_error(I,1);
 	
 	// clean up
 	mysql_close(S);

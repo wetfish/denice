@@ -100,7 +100,8 @@ static int l_irc_join(lua_State *L){
 	if(lua_gettop(L) == 2 && !lua_isnil(L, 2))
 		key_str  = luaL_checklstring(L, 2, &key_len);
 	printf("Joining channel %s%s%s%s.\n", chan_str, key_len?" with key '":"", key_str, key_len?"'":"");
-	irc_cmd_join(I, chan_str, key_len?key_str:0);
+	if(irc_cmd_join(I, chan_str, key_len?key_str:0))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -109,7 +110,8 @@ static int l_irc_part(lua_State *L){
 	size_t chan_len = 0;
 	const char* chan_str = luaL_checklstring(L, 1, &chan_len);
 	printf("Parting channel %s.\n", chan_str);
-	irc_cmd_part(I, chan_str);
+	if(irc_cmd_part(I, chan_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -118,8 +120,9 @@ static int l_irc_msg(lua_State *L){
 	size_t target_len = 0, message_len = 0;
 	const char* target_str  = luaL_checklstring(L, 1, &target_len);
 	const char* message_str = luaL_checklstring(L, 2, &message_len);
-	irc_cmd_msg(I, target_str, message_str);
 	printf("Sending message of length %d to %s: '%s'.\n", message_len, target_str, message_str);
+	if(irc_cmd_msg(I, target_str, message_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -129,7 +132,8 @@ static int l_irc_action(lua_State *L){
 	const char* target_str  = luaL_checklstring(L, 1, &target_len);
 	const char* message_str = luaL_checklstring(L, 2, &message_len);
 	printf("Sending CTCP ACTION to %s: '%s'.\n", target_str, message_str);
-	irc_cmd_me(I, target_str, message_str);
+	if(irc_cmd_me(I, target_str, message_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -139,7 +143,8 @@ static int l_irc_invite(lua_State *L){
 	const char* nick_str = luaL_checklstring(L, 1, &nick_len);
 	const char* chan_str = luaL_checklstring(L, 2, &chan_len);
 	printf("Inviting %s to %s.\n", nick_str, chan_str);
-	irc_cmd_invite(I, nick_str, chan_str);
+	if(irc_cmd_invite(I, nick_str, chan_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -148,7 +153,8 @@ static int l_irc_names(lua_State *L){
 	size_t chan_len = 0;
 	const char* chan_str = luaL_checklstring(L, 1, &chan_len);
 	printf("Querying for users on %s.\n", chan_str);
-	irc_cmd_names(I, chan_str);
+	if(irc_cmd_names(I, chan_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -159,7 +165,8 @@ static int l_irc_list(lua_State *L){
 	if(lua_gettop(L) == 1 && !lua_isnil(L, 1))
 		chan_str = luaL_checklstring(L, 1, &chan_len);
 	printf("Listing channels%s%s%s.\n", chan_len?" matching pattern '":"", chan_str, chan_len?"'":"");
-	irc_cmd_list(I, chan_len?chan_str:0);
+	if(irc_cmd_list(I, chan_len?chan_str:0))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -177,7 +184,8 @@ static int l_irc_topic(lua_State *L){
 			topic_str?topic_str:"",
 		 	topic_str?"'":""
 		 );
-	irc_cmd_topic(I, chan_str, topic_str?topic_str:0);
+	if(irc_cmd_topic(I, chan_str, topic_str?topic_str:0))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -195,7 +203,8 @@ static int l_irc_cmode(lua_State *L){
 			mode_str?mode_str:"",
 		 	mode_str?"'":""
 		 );
-	irc_cmd_channel_mode(I, chan_str, mode_str?mode_str:0);
+	if(irc_cmd_channel_mode(I, chan_str, mode_str?mode_str:0))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -211,7 +220,8 @@ static int l_irc_umode(lua_State *L){
 			mode_str?mode_str:"",
 		 	mode_str?"'":""
 		 );
-	irc_cmd_user_mode(I, mode_str?mode_str:0);
+	if(irc_cmd_user_mode(I, mode_str?mode_str:0))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -224,7 +234,8 @@ static int l_irc_kick(lua_State *L){
 	if(lua_gettop(L) == 3 && !lua_isnil(L, 3))
 		msg_str = luaL_checklstring(L, 3, &msg_len);
 	printf("Kicking %s from %s%s%s%s.\n", nick_str, chan_str, msg_str?" with reason '":"", msg_str?msg_str:"", msg_str?"'":"");
-	irc_cmd_kick(I, nick_str, chan_str, msg_str);
+	if(irc_cmd_kick(I, nick_str, chan_str, msg_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -234,7 +245,8 @@ static int l_irc_notice(lua_State *L){
 	const char* target_str  = luaL_checklstring(L, 1, &target_len);
 	const char* message_str = luaL_checklstring(L, 2, &message_len);
 	printf("Sending notice to %s: '%s'.\n", target_str, message_str);
-	irc_cmd_notice(I, target_str, message_str);
+	if(irc_cmd_notice(I, target_str, message_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -244,7 +256,8 @@ static int l_irc_ctcp_req(lua_State *L){
 	const char* target_str  = luaL_checklstring(L, 1, &target_len);
 	const char* message_str = luaL_checklstring(L, 2, &message_len);
 	printf("Sending CTCP request to %s: '%s'.\n", target_str, message_str);
-	irc_cmd_ctcp_request(I, target_str, message_str);
+	if(irc_cmd_ctcp_request(I, target_str, message_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -272,7 +285,8 @@ static int l_irc_whois(lua_State *L){
 	size_t nick_len = 0;
 	const char* nick_str = luaL_checklstring(L, 1, &nick_len);
 	printf("Querying whois on %s.\n", nick_str);
-	irc_cmd_whois(I, nick_str);
+	if(irc_cmd_whois(I, nick_str))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -287,7 +301,8 @@ static int l_irc_quit(lua_State *L){
 			msg_str?msg_str:"",
 		 	msg_str?"'":""
 		 );
-	irc_cmd_quit(I, msg_str?msg_str:0);
+	if(irc_cmd_quit(I, msg_str?msg_str:0))
+		irc_error(I, 0);
 	return 0;
 }
 
@@ -296,7 +311,8 @@ static int l_irc_raw(lua_State *L){
 	size_t cmd_len = 0;
 	const char* cmd_str = luaL_checklstring(L, 1, &cmd_len);
 	printf("Sending raw command: %s\n", cmd_str);
-	irc_send_raw(I, cmd_str);
+	if(irc_send_raw(I, cmd_str))
+		irc_error(I, 0);
 	return 0;
 }
 

@@ -5,6 +5,13 @@
 #include "globals.h"
 #include "error.h"
 
+// Handler for libircclient errors
+void irc_error(irc_session_t* irc_session, int fatal){
+	int err = irc_errno(irc_session);
+	const char* errstr = irc_strerror(err);
+	error(fatal, "IRC error: %s (%d)\n", errstr, err);
+}
+
 // Print formatted error and if error is fatal, terminate
 void error(int fatal, char* format, ...){
 	char str[256];
@@ -20,7 +27,7 @@ void error(int fatal, char* format, ...){
 		fprintf(stderr,"Fatal error... Exiting.\n");
 		exit(1);
 	}
-	else if(I){
+	else if(I && irc_is_connected(I)){
 		// generate ERROR event to handle in scripts
 		const char** strp = malloc(sizeof(char*));
 		strp[0] = str;
