@@ -45,7 +45,7 @@ function bigrainbow(word,user,target)
 	f:write(word)
 	f:close()
 	local f = io.open("/tmp/denice_rainbow")
-	for line in f:lines()
+	for line in f:lines() do
 			irc_msg(target,line)
 	end
 	f:close()
@@ -59,7 +59,7 @@ function biggerrainbow(word,user,target)
         f:write(word)
         f:close()
         local f = io.open("/tmp/denice_rainbow")
-        for line in f:lines()
+        for line in f:lines() do
 			irc_msg(target,line)
 		end
         f:close()
