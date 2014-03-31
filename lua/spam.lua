@@ -31,10 +31,10 @@ function rainbow(word,user,target)
 	local f = io.popen("toilet -f term -F gay --irc -w 80 > /tmp/denice_rainbow","w")
 	f:write(word)
 	f:close()
-	local f = io.open("/tmp/denice_rainbow")
-	local buffer = f:read("*line")
-	f:close()
-	irc_msg(target,buffer or "lol error")
+	local f = io.open("/tmp/denice_rainbow", "r")
+	for line in f:lines() do
+			irc_raw("PRIVMSG "..target.." :"..line)
+	end
 end
 
 function bigrainbow(word,user,target)
@@ -46,7 +46,7 @@ function bigrainbow(word,user,target)
 	f:close()
 	local f = io.open("/tmp/denice_rainbow", "r")
 	for line in f:lines() do
-			irc_msg(target,line:gsub("\n",""))
+			irc_raw("PRIVMSG "..target.." :"..line)
 	end
 	f:close()
 end
@@ -59,10 +59,9 @@ function biggerrainbow(word,user,target)
         f:write(word)
         f:close()
         local f = io.open("/tmp/denice_rainbow", "r")
-        local lc = 0
         for line in f:lines() do
-			irc_msg(target,line:gsub("\n",""))
-			lc = lc + 1
+        	irc_raw("PRIVMSG "..target.." :"..line)
+			--irc_msg(target,line:gsub("\n",""))
 		end
         f:close()
 end
