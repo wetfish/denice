@@ -28,7 +28,7 @@ function spam(word,user,target)
 end
 
 function rainbow(word,user,target)
-	local f = io.popen("toilet -f term -F gay --irc > /tmp/denice_rainbow","w")
+	local f = io.popen("toilet -f term -F gay --irc -w 80 > /tmp/denice_rainbow","w")
 	f:write(word)
 	f:close()
 	local f = io.open("/tmp/denice_rainbow")
@@ -44,9 +44,9 @@ function bigrainbow(word,user,target)
 	local f = io.popen("toilet -f future -F gay --irc -w 80 > /tmp/denice_rainbow","w")
 	f:write(word)
 	f:close()
-	local f = io.open("/tmp/denice_rainbow")
+	local f = io.open("/tmp/denice_rainbow", "r")
 	for line in f:lines() do
-			irc_msg(target,line)
+			irc_msg(target,line:gsub("\n",""))
 	end
 	f:close()
 end
@@ -58,14 +58,11 @@ function biggerrainbow(word,user,target)
         local f = io.popen("toilet -f mono9 -F gay --irc -w 80 > /tmp/denice_rainbow","w")
         f:write(word)
         f:close()
-        local f = io.open("/tmp/denice_rainbow")
+        local f = io.open("/tmp/denice_rainbow", "r")
         local lc = 0
         for line in f:lines() do
-			irc_msg(target,line)
+			irc_msg(target,line:gsub("\n",""))
 			lc = lc + 1
-			if lc % 5 == 5 then
-				os.execute("sleep 0.1s")
-			end
 		end
         f:close()
 end
