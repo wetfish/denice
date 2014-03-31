@@ -15,7 +15,7 @@ function message_callback(event, origin, params)
 	end
 	
 	if msg_parts[1] == "!talk" then
-		talk(send_to)
+		talk(send_to,nil,msg_parts[2])
 	end
 	
 	-- admin commands

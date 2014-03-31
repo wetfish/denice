@@ -85,7 +85,7 @@ function climb_tree(leaf)
 end
 
 -- generates text and either returns it or sends it to the channel
-function talk(channel, retmode)
+function talk(channel, retmode, seed)
 	local phrase = ""
 	local working_node
 	local root_node
@@ -99,9 +99,18 @@ function talk(channel, retmode)
 		best_depth=0,  -- current top word count
 		max_entries=10 -- maximum number of leaves to complete before stopping
 	}
+
+	local rows = nil
 	
 	-- initial seed
-	local rows = sql_query_fetch("SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` ORDER BY RAND() LIMIT 0,1")
+	if seed == nil then
+		rows = sql_query_fetch("SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` ORDER BY RAND() LIMIT 0,1")
+	else
+		rows = sql_query_fetch(
+			"SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE "..
+			"`Word1`='"..sql_escape(seed).."' OR `Word2`='"..sql_escape(seed).."' OR `Word3`='"..sql_escape(seed).."' ORDER BY RAND() LIMIT 0,1"
+		       )
+	end
 
 	if #rows < 1 then
 		return nil
@@ -119,6 +128,7 @@ function talk(channel, retmode)
 	
 	-- attempt to build backward (use temporary stack)
 	-- maybe we should throw out the content of the stack and attempt to build the tree from the first (last) 2 entries we find
+	-- that strategy would not work if seed~=nil so maybe just build another tree backwards
 	while not hit_end and num_steps < data_table.max_depth do
 		local _w2 = t:pop()
 		local _w3 = t:pop()
