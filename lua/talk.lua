@@ -36,7 +36,7 @@ function talk_parse(event, origin, params)
 			if recent_words[params[1]] == nil then
 				recent_words[params[1]] = {}
 			end
-			recent_words[params[1]][#recent_words+1] = word
+			recent_words[params[1]][#(recent_words[params[1]])+1] = word
 			if #(recent_words[params[1]]) > 32 then
 				table.remove(recent_words[params[1]], 1)
 			end
