@@ -16,6 +16,8 @@ function message_callback(event, origin, params)
 	
 	if msg_parts[1] == "!talk" then
 		talk(send_to,nil,msg_parts[2])
+	elseif msg_parts[1] == "!atalk" then
+		talk(send_to, nil, get_recent_word(params[1]))
 	elseif msg_parts[1] == "denice" then
 		local words = big_words(msg_parts[2], 5)
 		words[#words+1] = origin
