@@ -3,6 +3,18 @@ if recent_words == nil then
 	recent_words = {}
 end
 
+function dump_recent_words(channel, send_to)
+	if recent_words[channel] == nil or #(recent_words[channel]) < 1 then
+		irc_msg(send_to, "no recent words for "..channel)
+	else
+		local str = "recent words: "
+		for i,v in pairs(recent_words[channel]) do
+			str = str..v.." "
+		end
+		irc_msg(send_to, str)
+	end
+end
+
 -- returns a random word from that channel's recent_words table
 function get_recent_word(channel)
 	if recent_words[channel] == nil then
