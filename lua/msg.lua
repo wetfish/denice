@@ -10,7 +10,11 @@ function message_callback(event, origin, params)
 	else
 		-- reply to channel messages with probability from config
 		if math.random(1, 100) < get_config("bot:talk_rate")*100 then
-			talk(send_to, nil, get_recent_word(params[1]))
+			if math.random(1, 100) > 50 then
+				talk(send_to, nil, get_recent_word(params[1]))
+			else
+				talk(send_to, nil, nil)
+			end
 		end
 	end
 	
