@@ -104,7 +104,7 @@ end
 
 function lastfm_np(nick,user,channel,with_link)
 	if nick == nil then
-		nick = user.nick
+		nick = user
 	end
 	local t = lastfm_exec("user.getrecenttracks",{limit=1,user=lastfm_getuser(nick)})
 	if t ~= nil then
