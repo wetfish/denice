@@ -139,13 +139,21 @@ function talk(channel, retmode, seed)
 		t:push(_w2)
 		local rows = sql_query_fetch(
 			"SELECT `Index`,`Word1` FROM `dictionary` WHERE `Word2` = '"..sql_escape(_w2).."' "..
-			"AND `Word3`='"..sql_escape(_w3).."' ORDER BY RAND() LIMIT 0,1"
+			"AND `Word3`='"..sql_escape(_w3).."' ORDER BY RAND()"
 		)
 		if #rows == 0 then
 			hit_end = true
 		else
-			t:push(rows[1].Word1)
-			data_table.hit_nodes[rows[1].Index] = true
+			local selected_row = 1
+			while data_table.hit_nodes[rows[selected_row].Index] ~= nil do
+				selected_row = selected_row + 1
+			end
+			if selected_row > #rows then
+				hit_end = true
+			else
+				t:push(rows[1].Word1)
+				data_table.hit_nodes[rows[1].Index] = true
+			end
 		end
 		num_steps = num_steps + 1
 	end
