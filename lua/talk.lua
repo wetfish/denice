@@ -51,7 +51,7 @@ function talk_parse(event, origin, params)
 				recent_words[params[1]] = {}
 			end
 			recent_words[params[1]][#(recent_words[params[1]])+1] = word
-			if #(recent_words[params[1]]) > 12 then
+			while #(recent_words[params[1]]) > 12 do
 				table.remove(recent_words[params[1]], 1)
 			end
 		end
