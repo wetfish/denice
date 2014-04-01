@@ -35,3 +35,5 @@ dofile("lua/last.lua")
 dofile("lua/spam.lua")
 dofile("lua/weather.lua")
 dofile("lua/remember.lua")
+dofile("lua/dickbutt.lua")
+
