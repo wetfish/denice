@@ -15,12 +15,25 @@ function dump_recent_words(channel, send_to)
 	end
 end
 
--- returns a random word from that channel's recent_words table
+-- returns a random word from that channel's recent_words table and make sure it can be used to make a sentence
 function get_recent_word(channel)
 	if recent_words[channel] == nil then
 		return nil
 	else
-		return recent_words[channel][math.random(1,#(recent_words[channel]))]
+		local word = nil
+		local attempts = 0
+		while word == nil and attempts < #(recent_words[channel]) do
+			local test = recent_words[channel][math.random(1,#(recent_words[channel]))]
+			local rows = sql_query_fetch(
+				"SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE (`Word3` != '') AND "..
+				"(`Word1`='"..sql_escape(test).."' OR `Word2`='"..sql_escape(test).."' OR `Word3`='"..sql_escape(test).."') "..
+				" ORDER BY RAND() LIMIT 0,1"
+			)
+			if #rows > 0 then
+				word = test
+			end
+		end
+		return word
 	end
 end
 
