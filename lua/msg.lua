@@ -1,7 +1,7 @@
 -- Main message handling callback
 function message_callback(event, origin, params)
 	my_master = get_config("bot:master")
-	msg_parts = str_split(params[2], " ", 2)
+	msg_parts = str_split_max(params[2], " ", 2)
 	
 	-- send to channel if channel message, reply to sender if privmsg
 	send_to = params[1]
@@ -10,12 +10,16 @@ function message_callback(event, origin, params)
 	else
 		-- reply to channel messages with probability from config
 		if math.random(1, 100) < get_config("bot:talk_rate")*100 then
-			talk(send_to)
+			talk(send_to, nil, get_recent_word(params[1]))
 		end
 	end
 	
 	if msg_parts[1] == "!talk" then
 		talk(send_to,nil,msg_parts[2])
+	elseif msg_parts[1] == "denice" then
+		local words = big_words(msg_parts[2], 5)
+		words[#words+1] = origin
+		talk(send_to, nil, words[math.random(1,#words)])
 	end
 	
 	-- admin commands

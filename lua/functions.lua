@@ -1,6 +1,17 @@
 -- global variable for xml lib
 xml = require('LuaXml')
 
+-- select words above threshold size and add to a table
+function big_words(str, thresh)
+	local r = {}
+	for i,word in pairs(str_split(str, " ")) do
+		if word:len() >= thresh then
+			r[#r+1] = word
+		end
+	end
+	return r
+end
+
 -- split function borrowed from http://lua-users.org/wiki/SplitJoin
 function str_split(str, sep)
     local sep, fields = sep or ":", {}

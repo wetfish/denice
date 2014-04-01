@@ -1,9 +1,36 @@
+-- only initialize the recent_words table once
+if recent_words == nil then
+	recent_words = {}
+end
+
+-- returns a random word from that channel's recent_words table
+function get_recent_word(channel)
+	if recent_words[channel] == nil then
+		return nil
+	else
+		return recent_words[channel][math.random(1,#(recent_words[channel]))]
+	end
+end
+
 -- parses incoming messages to populate dictionary
 function talk_parse(event, origin, params)
 	local word1,word2
 	local words = str_split(params[2], " ")
 	for i=1,(#words+1) do
 		local word = words[i]
+		
+		-- add to recent_words if above threshold
+		if word:len() >= 7 then
+			if recent_words[params[1]] == nil then
+				recent_words[params[1]] = {}
+			end
+			recent_words[params[1]][#recent_words+1] = word
+			if #(recent_words[params[1]]) > 32 then
+				table.remove(recent_words[params[1]], 1)
+			end
+		end
+		
+		-- add to dictionary
 		if word1 ~= nil then
 			if word2 ~= nil then
 				local temp = word
