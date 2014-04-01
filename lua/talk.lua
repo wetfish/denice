@@ -29,7 +29,7 @@ function extend_tree(working_node, data_table)
 	
 	-- if we reached max depth, stop
 	if working_node.depth + 1 > data_table.max_depth then
-		if working_node.depth > data_table.best_depth then
+		if working_node.depth > data_table.best_depth and #(data_table.end_nodes) < data_table.max_entries/2 then
 			data_table.best_depth = working_node.depth
 			data_table.end_nodes[#(data_table.end_nodes)+1] = working_node
 		end
@@ -107,11 +107,11 @@ function talk(channel, retmode, seed)
 	
 	-- initial seed
 	if seed == nil then
-		rows = sql_query_fetch("SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` ORDER BY RAND() LIMIT 0,1")
+		rows = sql_query_fetch("SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE `Word3` != '' ORDER BY RAND() LIMIT 0,1")
 	else
 		rows = sql_query_fetch(
-			"SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE "..
-			"`Word1`='"..sql_escape(seed).."' OR `Word2`='"..sql_escape(seed).."' OR `Word3`='"..sql_escape(seed).."' ORDER BY RAND() LIMIT 0,1"
+			"SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE (`Word3` != '') AND "..
+			"(`Word1`='"..sql_escape(seed).."' OR `Word2`='"..sql_escape(seed).."' OR `Word3`='"..sql_escape(seed).."') ORDER BY RAND() LIMIT 0,1"
 		       )
 	end
 
