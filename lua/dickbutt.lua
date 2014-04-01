@@ -9,7 +9,7 @@ function dickbutt_callback(event, origin, params)
 			end
 			dickbutt_table[origin] = os.time()
 		else
-			irc_msg(params[1], origin.." is a dickbutt! (wait "..(os.time()-dickbutt_table[origin]+60).." seconds)")
+			irc_msg(params[1], origin.." is a dickbutt! (wait "..(60-(os.time()-dickbutt_table[origin])).." seconds)")
 		end
 	end
 end
