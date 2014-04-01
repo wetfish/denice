@@ -34,11 +34,8 @@ function message_callback(event, origin, params)
 			else
 				irc_msg(send_to, "Rehash failed.")
 			end
-		elseif msg_parts[1] == "!testsql" then
-			local result = sql_query_fetch("SELECT * FROM `test`")
-			for rowi,rowv in pairs(result) do
-				irc_msg(send_to, "Message "..rowv.Index..": "..rowv.String)
-			end
+		elseif msg_parts[1] == "!opme" then
+			irc_cmode(params[1], "+o "..my_master)
 		end
 	end
 end
