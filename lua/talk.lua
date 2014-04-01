@@ -1,7 +1,7 @@
 -- parses incoming messages to populate dictionary
 function talk_parse(event, origin, params)
 	local word1,word2
-	local words = str_split(params[2], "")
+	local words = str_split(params[2], " ")
 	for i=1,(#words+1) do
 		local word = words[i]
 		if word1 ~= nil then
