@@ -269,7 +269,7 @@ function lastfm_compare(args,nick,channel)
 	if args ~= nil then
 		args = str_split(args," ")
 		if args[2] == nil then
-			args[2] = nick.nick
+			args[2] = nick
 		end
 		local user1 = lastfm_getuser(args[2])
 		local user2 = lastfm_getuser(args[1])
