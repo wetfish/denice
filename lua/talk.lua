@@ -145,9 +145,11 @@ function talk(channel, retmode, seed)
 			hit_end = true
 		else
 			local selected_row = 1
-			while data_table.hit_nodes[rows[selected_row].Index] ~= nil do
+			
+			while selected_row <= #rows and data_table.hit_nodes[rows[selected_row].Index] ~= nil do
 				selected_row = selected_row + 1
 			end
+			
 			if selected_row > #rows then
 				hit_end = true
 			else
