@@ -3,6 +3,7 @@ if recent_words == nil then
 	recent_words = {}
 end
 
+-- send list of recent words from a channel
 function dump_recent_words(channel, send_to)
 	if recent_words[channel] == nil or #(recent_words[channel]) < 1 then
 		irc_msg(send_to, "no recent words for "..channel)
@@ -45,12 +46,12 @@ function talk_parse(event, origin, params)
 		local word = words[i]
 		
 		-- add to recent_words if above threshold
-		if word ~= nil and word:len() >= 7 then
+		if word ~= nil and word:len() >= 8 then
 			if recent_words[params[1]] == nil then
 				recent_words[params[1]] = {}
 			end
 			recent_words[params[1]][#(recent_words[params[1]])+1] = word
-			if #(recent_words[params[1]]) > 32 then
+			if #(recent_words[params[1]]) > 12 then
 				table.remove(recent_words[params[1]], 1)
 			end
 		end
