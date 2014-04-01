@@ -20,7 +20,7 @@ function talk_parse(event, origin, params)
 		local word = words[i]
 		
 		-- add to recent_words if above threshold
-		if word:len() >= 7 then
+		if word ~= nil and word:len() >= 7 then
 			if recent_words[params[1]] == nil then
 				recent_words[params[1]] = {}
 			end
