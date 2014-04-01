@@ -17,7 +17,7 @@ function last_callback(event, origin, params)
 	elseif msg_parts[1] == "!compare" then
 		lastfm_compare(msg_parts[2],origin,params[1])
 	elseif msg_parts[1] == "!myartists" then
-		lastfm_myartists(amsg_parts[2],origin,params[1])
+		lastfm_myartists(msg_parts[2],origin,params[1])
 	end
 end
 register_callback("CHANNEL", "last_callback")
