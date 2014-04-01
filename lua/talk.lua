@@ -1,21 +1,24 @@
 -- parses incoming messages to populate dictionary
 function talk_parse(event, origin, params)
 	local word1,word2
-	for i,word in pairs(str_split(params[2]," ")) do
-		if word ~= nil then
-			if word1 ~= nil then
-				if word2 ~= nil then
-					sql_fquery(
-						"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
-						"VALUES('"..sql_escape(word2).."','"..sql_escape(word1).."','"..sql_escape(word).."','"..os.time().."')"
-					)
+	local words = str_split(params[2], "")
+	for i=1,(#words+1) do
+		local word = words[i]
+		if word1 ~= nil then
+			if word2 ~= nil then
+				local temp = word
+				if temp == nil then
+					temp = ""
 				end
-				word2 = word1		
+				sql_fquery(
+					"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
+					"VALUES('"..sql_escape(word2).."','"..sql_escape(word1).."','"..sql_escape(temp).."','"..os.time().."')"
+				)
 			end
-			word1 = word
+			word2 = word1		
 		end
+		word1 = word
 	end
-
 end
 register_callback("CHANNEL", "talk_parse")
 
