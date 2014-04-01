@@ -316,7 +316,7 @@ function lastfm_myartists(args,user,channel)
 		end
 	end
         if nick == nil then
-                nick = user.nick
+                nick = user
         end
         local t = lastfm_exec("user.gettopartists",{user=lastfm_getuser(nick),period=period})
 	if t ~= nil then
