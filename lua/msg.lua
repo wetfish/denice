@@ -1,10 +1,11 @@
 -- Main message handling callback
 function message_callback(event, origin, params)
-	my_master = get_config("bot:master")
-	msg_parts = str_split_max(params[2], " ", 2)
+	local my_master = get_config("bot:master")
+	local my_nick = get_config("bot:nick")
+	local msg_parts = str_split_max(params[2], " ", 2)
 	
 	-- send to channel if channel message, reply to sender if privmsg
-	send_to = params[1]
+	local send_to = params[1]
 	if event == "PRIVMSG" then
 		send_to = origin
 	else
@@ -22,7 +23,7 @@ function message_callback(event, origin, params)
 		talk(send_to,nil,msg_parts[2])
 	elseif msg_parts[1] == "!atalk" then
 		talk(send_to, nil, get_recent_word(params[1]))
-	elseif msg_parts[1] == "denice" then
+	elseif msg_parts[1]:sub(0,my_nick:len()) == my_nick then
 		local words = big_words(msg_parts[2], 5)
 		words[#words+1] = origin
 		talk(send_to, nil, words[math.random(1,#words)])
