@@ -170,8 +170,8 @@ end
 
 function lastfm_account(user,nick,channel)
 	if user ~= nil then
-		lastfm_table[nick.nick]=user
-		irc_msg(channel,"Set username for '"..nick.nick.."' to '"..user.."'")
+		lastfm_table[nick]=user
+		irc_msg(channel,"Set username for '"..nick.."' to '"..user.."'")
 		lastfm_save(lastfm_table)
 	else
 		irc_msg(channel,"Usage: !last <username>")
