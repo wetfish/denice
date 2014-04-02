@@ -316,6 +316,16 @@ static int l_irc_raw(lua_State *L){
 	return 0;
 }
 
+// Lua function: irc_color(string)
+static int l_irc_color(lua_State *L){
+	size_t str_len = 0;
+	const char* input = luaL_checklstring(L, 1, &str_len);
+	char* res = irc_color_convert_to_mirc(input);
+	lua_pushstring(L, res);
+	free(res);
+	return 1;
+}
+
 
 /* MYSQL SECTION */
 
@@ -585,6 +595,9 @@ void register_lua_functions(lua_State* L){
 	
 	lua_pushcfunction(L, l_throw_error);
 	lua_setglobal(L, "throw_error");
+	
+	lua_pushcfunction(L, l_irc_color);
+	lua_setglobal(L, "irc_color");
 	
 }
 

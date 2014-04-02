@@ -37,4 +37,5 @@ dofile("lua/weather.lua")
 dofile("lua/remember.lua")
 dofile("lua/dickbutt.lua")
 dofile("lua/caps.lua")
+dofile("lua/help.lua")
 

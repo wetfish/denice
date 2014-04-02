@@ -1,0 +1,52 @@
+# Denice's online help file
+# This file is sent in reply to the !help command
+# Lines that start with a pound symbol are ignored
+# Formatting is possible using the irc_color function
+# see http://www.ulduzsoft.com/libircclient/index.html#irc_color_convert_to_mirc
+[B]*[U]Denice's Big Fancy Command List[/U] * * *[/B]
+ 
+[B]-> [U]Talk functions[/U][/B]
+   * [B]!talk[/B] - produce a random phrase
+   * [B]!talk [U]word[/U][/N] - try to produce a random phrase with that word
+   * [B]!atalk[/B] - try to produce a random context-relevant phrase
+ 
+[B]-> [U]Spam functions[/U][/B]
+   * [B]!spam [U]phrase[/U][/B] - show an annoying rendition of phrase
+   * [B]!rainbow [U]phrase[/U][/B] - show a colorful rendition of phrase
+   * [B]!bigrainbow [U]phrase[/U][/B] - show a big colorful rendition
+   * [B]!biggerrainbow [U]phrase[/U][/B] - show a huge colorful rendition
+   * [B]!dickbutt [U]phrase[/U][/B] - show a large piece of ascii art
+
+ 
+[B]-> [U]Quote functions[/U][/B]
+   * [B]!quote[/B] - display a random quote
+   * [B]!quote &latest[/B] - display the most recent quote
+   * [B]!quote #[U]num[/U][/B] - display quote with index num
+   * [B]!quote *[U]exp[/U][/B] - display quote matching the expression
+   * [B]!quote add [U]quote[/U][/B] - add the quote to the database
+ 
+[B]-> [U]Memory functions[/U][/B]
+   * [B]!remember[/B] - display list of things the bot remembers
+   * [B]!remember [U]thing[/U][/B] - display things the bot knows about the thing
+   * [B]!remember [U]thing[/U] = [U]thing[/U][/B] - remember the thing about the thing
+   * [B]!forget [U]thing[/U] = [U]thing[/U][/B] - forget the thing about the thing
+   
+[B]-> [U]Weather functions[/U][/B]
+   * [B]!weather [U]place[/U][/B] - show the weather for the place
+   * [B]!weather -c [U]place[/U][/B] - show the weather for the place using celsius
+ 
+[B]-> [U]Last.fm functions[/U][/B]
+   * [B]!last [U]username[/U][/B] - set your last.fm username
+   * [B]!np[/B] - show what you're listening to
+   * [B]!np [U]person[/U][/B] - show what they're listening to
+   * [B]!tags [U]artist[/U][/B] - show the artist's tags
+   * [B]!tagged [U]tag[/U][/B] - show artists with the tag
+   * [B]!similar [U]artist[/U][/B] - show similar artists
+   * [B]!compare [U]person[/U][/B] - compare yourself to a person
+   * [B]!compare [U]person[/U] [U]person[/U][/B] - compare two people
+   * [B]!myartists[/B] - show your top artists
+   * [B]!myartists [U]person[/U][/B] - show their top artists
+   * [B]!myartists [U]period[/U] [U]person[/U][/B] - show top artists over specific period
+                                [U]period[/U] = ( -7day | -3month | -6month | -overall )
+                                 
+[B]* End of documentation.[/B]
