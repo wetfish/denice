@@ -3,7 +3,7 @@
 # Lines that start with a pound symbol are ignored
 # Formatting is possible using the irc_color function
 # see http://www.ulduzsoft.com/libircclient/index.html#irc_color_convert_to_mirc
-[B]** [U]Denice's Big Fancy Command List[/U] * * *[/B]
+[B]** [U]Denice's Big Fancy Command List[/U][/B]
  
 [B]-> [U]Talk functions[/U][/B]
    * [B]!talk[/B] - produce a random phrase
