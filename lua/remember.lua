@@ -69,7 +69,7 @@ function forget(s,w,t)
                 title = cleanSpace(title)
                 local content = s:sub(indexOfEquals+1)
                 content = cleanSpace(content)
-		sql_fquery("DELETE FROM `remember` WHERE `Title` LIKE '"..esc(title).."' AND `Content` LIKE '"..esc(content).."'")
+		sql_fquery("DELETE FROM `remember` WHERE `Title` LIKE '"..sql_escape(title).."' AND `Content` LIKE '"..sql_escape(content).."'")
 		irc_msg(t,w..": Okay, I forgot that.")
 	end
 end
