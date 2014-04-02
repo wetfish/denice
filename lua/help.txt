@@ -7,7 +7,7 @@
  
 [B]-> [U]Talk functions[/U][/B]
    * [B]!talk[/B] - produce a random phrase
-   * [B]!talk [U]word[/U][/N] - try to produce a random phrase with that word
+   * [B]!talk [U]word[/U][/B] - try to produce a random phrase with that word
    * [B]!atalk[/B] - try to produce a random context-relevant phrase
  
 [B]-> [U]Spam functions[/U][/B]
