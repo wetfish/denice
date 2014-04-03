@@ -38,4 +38,4 @@ dofile("lua/remember.lua")
 dofile("lua/dickbutt.lua")
 dofile("lua/caps.lua")
 dofile("lua/help.lua")
-
+dofile("lua/stats.lua")
