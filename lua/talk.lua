@@ -75,53 +75,87 @@ function talk_parse(event, origin, params)
 end
 register_callback("CHANNEL", "talk_parse")
 
+-- returns string representing that tree node
+function cat_tree(root, depth)
+	local depth = depth or 1
+	local str = ""
+
+	if root.__q == nil then root.__q = 0 end
+
+	local p = root.parent
+
+	while p ~= nil do
+		if p.__q == 0 then
+			str = "│  " .. str
+		else
+			str = "   " .. str
+		end
+		p = p.parent
+	end
+
+	if root.parent == nil or root == root.parent.subnodes[#(root.parent.subnodes)] then
+		root.__q = 1
+		str = str:sub(1,-2) .. " └─ " .. (root.value or "") .. "\n"
+	else
+		str = str:sub(1,-2) .. " ├─ " .. (root.value or "") .. "\n"
+	end
+
+	for i,v in pairs(root.subnodes) do
+		str = str .. cat_tree(v, depth+1)
+	end
+
+	return str
+end
+
+
+
 -- operates on tree node and state table to help generate text
 function extend_tree(working_node, data_table)
 	local w1 = working_node.parent.value
 	local w2 = working_node.value
 	
-	-- if we reached max depth, stop
-	if working_node.depth + 1 > data_table.max_depth then
-		if working_node.depth > data_table.best_depth and #(data_table.end_nodes) < data_table.max_entries/2 then
-			data_table.best_depth = working_node.depth
-			data_table.end_nodes[#(data_table.end_nodes)+1] = working_node
-		end
-		return
-	end
-	
 	-- if we reached max entries, stop
 	if #(data_table.end_nodes)+1 > data_table.max_entries then
+		return
+	end
+
+	-- if we reached max depth, stop
+	if working_node.depth + 1 > data_table.max_depth then
+		if #(data_table.end_nodes) == 0 then
+			data_table.max_nodes[#(data_table.max_nodes)+1] = working_node
+		else
+			data_table.max_nodes = {}
+		end
 		return
 	end
 	
 	-- attempt to extend phrase
 	local rows = sql_query_fetch(
 		"SELECT `Index`,`Word3` FROM `dictionary` WHERE `Word1` = '"..sql_escape(w1).."' "..
-		"AND `Word2` = '"..sql_escape(w2).."' ORDER BY RAND() LIMIT 0,2"
+		"AND `Word2` = '"..sql_escape(w2).."' ORDER BY RAND() LIMIT 0,3"
 	)
 
-	-- 2 options (recursive magic!)
-	if #rows > 1 and data_table.hit_nodes[rows[2].Index] == nil then
-		local new_node = {subnodes={},parent=working_node,value=rows[2].Word3,depth=working_node.depth+1}
-		working_node.subnodes[#(working_node.subnodes)+1] = new_node
-		data_table.hit_nodes[rows[2].Index] = true
-		extend_tree(new_node, data_table)
-	end
-	
-	-- at least 1 option (recursive magic!)
-	if #rows > 0 and data_table.hit_nodes[rows[1].Index] == nil then
-		local new_node = {subnodes={},parent=working_node,value=rows[1].Word3,depth=working_node.depth+1}
-		working_node.subnodes[#(working_node.subnodes)+1] = new_node
-		data_table.hit_nodes[rows[1].Index] = true
-		extend_tree(new_node, data_table)
-		
-	-- found nothing
-	else
-		if working_node.depth > data_table.best_depth * .75 then
-			data_table.best_depth = working_node.depth
-			data_table.end_nodes[#(data_table.end_nodes)+1] = working_node
+	-- remove nodes we already hit
+	for i,v in pairs(rows) do
+		if data_table.hit_nodes[v.Index] ~= nil then
+			table.remove(rows, i)
 		end
 	end
+
+	if #rows > 0 then
+		for i,v in pairs(rows) do
+			local new_node = {subnodes={},parent=working_node,value=v.Word3,depth=working_node.depth+1}
+			working_node.subnodes[#(working_node.subnodes)+1] = new_node
+			data_table.hit_nodes[v.Index] = true
+			extend_tree(new_node, data_table)
+		end
+	else -- perhaps should check if there are 'really' no rows or if there are no unhit rows...
+		if working_node.depth > data_table.best_depth then
+			data_table.best_depth = working_node.depth
+		end
+		data_table.end_nodes[#(data_table.end_nodes)+1] = working_node
+	end
+
 end
 
 -- collapses a run of the tree into a phrase
@@ -151,9 +185,10 @@ function talk(channel, retmode, seed)
 		hit_nodes={},  -- track indices already used to prevent repeats/loops
 		node_count=0,  -- count nodes in tree
 		end_nodes={},  -- track leaves representing complete strings
-		max_depth=35,  -- maximum word count
+		max_nodes={},  -- track leaves representing strings of maximum length
+		max_depth=25,  -- maximum word count
 		best_depth=0,  -- current top word count
-		max_entries=10 -- maximum number of leaves to complete before stopping
+		max_entries=15 -- maximum number of leaves to complete before stopping
 	}
 
 	local rows = nil
@@ -185,7 +220,7 @@ function talk(channel, retmode, seed)
 	-- attempt to build backward (use temporary stack)
 	-- maybe we should throw out the content of the stack and attempt to build the tree from the first (last) 2 entries we find
 	-- that strategy would not work if seed~=nil so maybe just build another tree backwards
-	while not hit_end and num_steps < data_table.max_depth do
+	while not hit_end do
 		local _w2 = t:pop()
 		local _w3 = t:pop()
 		t:push(_w3)
@@ -216,17 +251,27 @@ function talk(channel, retmode, seed)
 	-- add the contents of temp stack into main tree in reverse order
 	root_node = {subnodes={},parent=nil,value=nil,depth=0}
 	working_node = root_node
-	while #t > 0 do
-		new_node = {subnodes={},parent=working_node,value=t:pop(),depth=working_node.depth+1}
-		working_node.subnodes[#(working_node.subnodes)+1] = new_node
-		working_node = new_node
+
+	while #t > 0 and working_node.depth < data_table.max_depth do
+                new_node = {subnodes={},parent=working_node,value=t:pop(),depth=working_node.depth+1}
+       	        working_node.subnodes[#(working_node.subnodes)+1] = new_node
+               	working_node = new_node
 	end
 	
 	-- build tree down from end of initial run
 	extend_tree(working_node, data_table)
+
+	-- print tree
+	local f = io.open(get_config("bot:treefile"), "w")
+	f:write(cat_tree(root_node))
+	f:close()
 	
 	-- select random leaf and collapse the run into a phrase
-	phrase = climb_tree(data_table.end_nodes[math.random(1,#(data_table.end_nodes))])
+	if #(data_table.end_nodes) > 0 then
+		phrase = climb_tree(data_table.end_nodes[math.random(1,#(data_table.end_nodes))])
+	else
+		phrase = climb_tree(data_table.max_nodes[math.random(1,#(data_table.max_nodes))])
+	end
 
 	-- additional processing for ctcp actions
 	local isAction=false
