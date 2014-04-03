@@ -58,18 +58,19 @@ function talk_parse(event, origin, params)
 		
 		-- add to dictionary
 		if word1 ~= nil then
-			if word2 ~= nil then
-				local temp = word
-				if temp == nil then
-					temp = ""
-				end
-				sql_fquery(
-					"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
-					"VALUES('"..sql_escape(word2).."','"..sql_escape(word1).."','"..sql_escape(temp).."','"..os.time().."')"
-				)
+			local temp1,temp2 = word,word2
+			if temp1 == nil then
+				temp1 = ""
 			end
-			word2 = word1		
+			if temp2 == nil then
+				temp2 = ""
+			end
+			sql_fquery(
+				"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
+				"VALUES('"..sql_escape(temp2).."','"..sql_escape(word1).."','"..sql_escape(temp1).."','"..os.time().."')"
+			)
 		end
+		word2 = word1		
 		word1 = word
 	end
 end
