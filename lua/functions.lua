@@ -12,14 +12,22 @@ function big_words(str, thresh)
 	return r
 end
 
--- split function borrowed from http://lua-users.org/wiki/SplitJoin
+-- split string by separator
 function str_split(str, sep)
     if str == nil then
         return {}
     else
-        local sep, fields = sep or ":", {}
-        local pattern = string.format("([^%s]*)", sep)
-        str:gsub(pattern, function(c) fields[#fields+1] = c end)
+        local sep, fields = sep or " ", {}
+        local str = str.." "
+        local index = 1
+        while index <= str:len() do
+                local piece_end = str:find(sep, index)
+                if piece_end == nil then
+                        piece_end = str:len()
+                end
+                fields[#fields+1] = str:sub(index, piece_end - 1)
+                index = piece_end + 1
+        end
         return fields
     end
 end
