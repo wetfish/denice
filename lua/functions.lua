@@ -18,7 +18,7 @@ function str_split(str, sep)
         return {}
     else
         local sep, fields = sep or ":", {}
-        local pattern = string.format("([^%s]+)", sep)
+        local pattern = string.format("([^%s]*)", sep)
         str:gsub(pattern, function(c) fields[#fields+1] = c end)
         return fields
     end
