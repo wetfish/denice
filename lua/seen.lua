@@ -19,9 +19,9 @@ function seen(message,user,channel)
 	elseif row[1].event == "PART" then
 		str = "parting "..row[1].location
 	elseif row[1].event == "QUIT" then
-		str = "quitting with message '"..row[1].message.."'"
+		str = "quitting with message '"..row[1].location.."'"
 	elseif row[1].event == "JOIN" then
-		str = "joining '"..row[1].location.."'"
+		str = "joining "..row[1].location
 	end
 
         irc_msg(channel,user..": I last saw "..message.." on "..os.date("%c",row[1].timestamp)..", "..(str or "UNDEFINED")..".")
