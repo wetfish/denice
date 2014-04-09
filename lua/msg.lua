@@ -38,6 +38,12 @@ function message_callback(event, origin, params)
 			irc_join(msg_parts[2])
 		elseif msg_parts[1] == "!recent" then
 			dump_recent_words(msg_parts[2] or params[1], send_to)
+		elseif msg_parts[1] == "!talkdump" then
+			local n = msg_parts[2]
+			if n == nil then n = 5 end
+			for i=0,n do
+				talk(send_to)
+			end
 		elseif msg_parts[1] == "!quit" then
 			irc_quit("bye bye")
 		elseif msg_parts[1] == "!rehash" then

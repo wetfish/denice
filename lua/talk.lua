@@ -27,7 +27,7 @@ function get_recent_word(channel)
 			local test = recent_words[channel][math.random(1,#(recent_words[channel]))]
 			local rows = sql_query_fetch(
 				"SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE (`Word3` != '') AND "..
-				"(`Word1`='"..sql_escape(test).."' OR `Word2`='"..sql_escape(test).."' OR `Word3`='"..sql_escape(test).."') "..
+				"(`Word1` LIKE '"..sql_escape(test).."' OR `Word2` LIKE '"..sql_escape(test).."' OR `Word3` LIKE '"..sql_escape(test).."') "..
 				" ORDER BY RAND() LIMIT 0,1"
 			)
 			if #rows > 0 then
@@ -132,8 +132,8 @@ function extend_tree(working_node, data_table)
 	
 	-- attempt to extend phrase
 	local rows = sql_query_fetch(
-		"SELECT `Index`,`Word3` FROM `dictionary` WHERE `Word1` = '"..sql_escape(w1).."' "..
-		"AND `Word2` = '"..sql_escape(w2).."' ORDER BY RAND() LIMIT 0,3"
+		"SELECT `Index`,`Word3` FROM `dictionary` WHERE `Word1` LIKE '"..sql_escape(w1).."' "..
+		"AND `Word2` LIKE '"..sql_escape(w2).."' ORDER BY RAND() LIMIT 0,3"
 	)
 
 	-- remove nodes we already hit
@@ -163,7 +163,7 @@ end
 function climb_tree(leaf)
 	local phrase = ""
 	while leaf ~= nil do
-		if leaf.value ~= nil then
+		if leaf.value ~= nil and ((leaf.parent ~= nil and leaf.parent.parent ~= nil and #(leaf.subnodes) > 0) or leaf.value:len() > 0) then
 			if phrase:len() then
 				phrase = leaf.value .. " " .. phrase
 			else
@@ -200,7 +200,7 @@ function talk(channel, retmode, seed)
 	else
 		rows = sql_query_fetch(
 			"SELECT `Word1`,`Word2`,`Word3` FROM `dictionary` WHERE (`Word3` != '') AND "..
-			"(`Word1`='"..sql_escape(seed).."' OR `Word2`='"..sql_escape(seed).."' OR `Word3`='"..sql_escape(seed).."') ORDER BY RAND() LIMIT 0,1"
+			"(`Word1` LIKE '"..sql_escape(seed).."' OR `Word2` LIKE '"..sql_escape(seed).."' OR `Word3` LIKE '"..sql_escape(seed).."') ORDER BY RAND() LIMIT 0,1"
 		       )
 	end
 
@@ -227,8 +227,8 @@ function talk(channel, retmode, seed)
 		t:push(_w3)
 		t:push(_w2)
 		local rows = sql_query_fetch(
-			"SELECT `Index`,`Word1` FROM `dictionary` WHERE `Word2` = '"..sql_escape(_w2).."' "..
-			"AND `Word3`='"..sql_escape(_w3).."' ORDER BY RAND()"
+			"SELECT `Index`,`Word1` FROM `dictionary` WHERE `Word2` LIKE '"..sql_escape(_w2).."' "..
+			"AND `Word3` LIKE '"..sql_escape(_w3).."' ORDER BY RAND()"
 		)
 		if #rows == 0 then
 			hit_end = true
