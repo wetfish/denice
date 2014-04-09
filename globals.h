@@ -15,4 +15,7 @@ dictionary *C;
 // remember our config file
 char* conf_file;
 
+// quit flat
+int do_quit;
+
 #endif

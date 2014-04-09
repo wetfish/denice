@@ -12,6 +12,7 @@ void irc_error(irc_session_t* irc_session, int fatal){
 	fprintf(stderr,"IRC error: %s (%d)\n", errstr, err);
 	if(fatal){
 		fprintf(stderr, "Fatal error... Exiting.\n");
+		exit(1);
 	}
 }
 

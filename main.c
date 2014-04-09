@@ -32,6 +32,7 @@ int main(int argc, char** argv){
 	irc_callbacks_t irc_callbacks;
 	char* host_str;
 	int host_len, ssl;
+	I = 0;
 	
 	if(argc != 2)
 		error(1, "Error: config file must be specified on comand line\n");
@@ -93,29 +94,35 @@ int main(int argc, char** argv){
 	irc_callbacks.event_ctcp_action = event_generic;
 	irc_callbacks.event_channel_notice = event_generic;
 	irc_callbacks.event_numeric = event_numeric;
-	I = irc_create_session(&irc_callbacks);
-	if(!I)
-		error(1, "Unable to create IRC session... probably out of memory\n");
-	irc_option_set(I, LIBIRC_OPTION_STRIPNICKS);
-	irc_option_set(I, LIBIRC_OPTION_SSL_NO_VERIFY);
-	irc_option_set(I, LIBIRC_OPTION_DEBUG);
-	
-	// initialize irc server connection
-	if(irc_connect(I,
+	do_quit = 0;
+
+	while(!do_quit){
+		if(I) irc_destroy_session(I);
+
+		I = irc_create_session(&irc_callbacks);
+		if(!I)
+			error(1, "Unable to create IRC session... probably out of memory\n");
+		irc_option_set(I, LIBIRC_OPTION_STRIPNICKS);
+		irc_option_set(I, LIBIRC_OPTION_SSL_NO_VERIFY);
+		irc_option_set(I, LIBIRC_OPTION_DEBUG);
+		
+		// initialize irc server connection
+		if(irc_connect(I,
 				   host_str,
 				   iniparser_getint(C,"server:port",6667), 0,
 				   iniparser_getstring(C,"bot:nick","bot"),
 				   iniparser_getstring(C,"bot:user","bot"),
 				   "libircclient"
 				  ))
-		irc_error(I,1);
+			irc_error(I,1);
 	
-	// not sure why we need to sleep here, but if we don't, we can't connect
-	sleep(1);
+		// not sure why we need to sleep here, but if we don't, we can't connect
+		sleep(1);
 	
-	// run the irc client loop
-	if(irc_run(I))
-		irc_error(I,1);
+		// run the irc client loop
+		if(irc_run(I))
+		irc_error(I,0);
+	}
 	
 	// clean up
 	mysql_close(S);

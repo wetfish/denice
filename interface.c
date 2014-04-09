@@ -303,6 +303,7 @@ static int l_irc_quit(lua_State *L){
 		 );
 	if(irc_cmd_quit(I, msg_str?msg_str:0))
 		irc_error(I, 0);
+	do_quit = 1;
 	return 0;
 }
 
