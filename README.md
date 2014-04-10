@@ -35,3 +35,8 @@ Dependency links (if you don't know how to google):
 Some things that are helpful and you might want to do:
 * Patch libircclient to use a larger send buffer (recommend ~4KB, rather than the 1KB default)
 * Patch libircclient to allow read operations to timeoout, so the bot can detect when it is disconnected
+
+Running the bot:
+* Import tables.sql into your database
+* Edit conf.ini (or whatever you want to call it)
+* ./denice conf.ini
