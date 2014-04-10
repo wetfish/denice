@@ -263,9 +263,9 @@ function talk(channel, retmode, seed)
 	extend_tree(working_node, data_table)
 
 	-- print tree
-	local f = io.open(get_config("bot:treefile"), "w")
-	f:write(cat_tree(root_node))
-	f:close()
+	--local f = io.open(get_config("bot:treefile"), "w")
+	--f:write(cat_tree(root_node))
+	--f:close()
 	
 	-- select random leaf and collapse the run into a phrase
 	if #(data_table.end_nodes) > 0 then

@@ -1,7 +1,7 @@
 # Paths and flags for Lua
-LUA_INCLUDE_DIR=/usr/include/lua5.2
-LUA_LIBRARY_DIR=/usr/lib/i386-linux-gnu
-LUA_FLAGS=-llua5.2
+LUA_INCLUDE_DIR=libs/lua-5.2.3/src
+LUA_LIBRARY_DIR=libs/lua-5.2.3/src
+LUA_FLAGS=-llua
 
 # Paths for Libircclient
 IRC_INCLUDE_DIR=libs/libircclient-1.7/include
@@ -21,7 +21,7 @@ INCPATHS=-I$(LUA_INCLUDE_DIR) -I$(IRC_INCLUDE_DIR) -I$(INI_INCLUDE_DIR) $(SQL_CF
 LIBPATHS=-L$(IRC_LIBRARY_DIR) -L$(LUA_LIBRARY_DIR) -L$(INI_LIBRARY_DIR)
 LIBFLAGS=$(SQL_LIBS) $(LUA_FLAGS) $(IRC_FLAGS) $(INI_FLAGS)
 CC=gcc
-CCFLAGS=-Wall $(INCPATHS)
+CCFLAGS=-g -Wall $(INCPATHS)
 LDFLAGS=$(LIBPATHS) $(LIBFLAGS)
 SOURCES=$(wildcard *.c)
 OBJECTS=$(SOURCES:.c=.o)
