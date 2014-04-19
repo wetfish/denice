@@ -10,7 +10,7 @@ function weather(zip,user,channel)
     local http = require("socket.http")
 	local json = require('json')
 	
-	if zip == nil or len(zip) == 0 then
+	if zip == nil or zip:len() == 0 then
 		irc_msg(channel,user..": please specify a location")
 		return
 	end
