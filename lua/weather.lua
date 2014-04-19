@@ -24,9 +24,9 @@ function weather(zip,user,channel)
 	end
 
 	local woe_s = "http://where.yahooapis.com/v1/places.q("..url_encode(zip)..")?appid=QbEjA07V34EJy1A.6Q9_x532DTrZGqXMNt1Et0arLk.IDubUeLhfwYyizjPSvjmiah6LDLzpaA--&format=json"
-        local woe_b = http.request(woe_s)
-        local woe_t = json.decode(woe_b)
-	if woe_t.places.place == nil then
+    local woe_b = http.request(woe_s)
+    local woe_t = json.decode(woe_b)
+	if wot_t.places == nil or woe_t.places.place == nil then
 		irc_msg(channel,"That place doesn't exist!")
 		return
 	end
