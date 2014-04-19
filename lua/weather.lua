@@ -9,6 +9,11 @@ register_callback("CHANNEL", "weather_callback")
 function weather(zip,user,channel)
     local http = require("socket.http")
 	local json = require('json')
+	
+	if zip == nil or len(zip) == 0 then
+		irc_msg(channel,user..": please specify a location")
+		return
+	end
 
 	local metachar = {b=string.char(2),o=string.char(15),a=string.char(1)}
 
@@ -22,7 +27,7 @@ function weather(zip,user,channel)
         local woe_b = http.request(woe_s)
         local woe_t = json.decode(woe_b)
 	if woe_t.places.place == nil then
-		myBot:privmsg("That place doesn't exist!",channel)
+		irc_msg(channel,"That place doesn't exist!")
 		return
 	end
 	local woeid = woe_t.places.place[1].woeid;
