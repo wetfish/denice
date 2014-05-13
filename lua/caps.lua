@@ -20,10 +20,10 @@ function caps_callback(event, origin, params)
 	end
 	
 	-- determine if we should kick or warn
-	if caps_table[origin] > 7 and this_is_caps then
+	if caps_table[origin] > 1 and this_is_caps then
 		irc_raw("KICK "..params[1].." "..origin.." :i warned you!")
-		caps_table[origin] = 5
-	elseif caps_table[origin] > 5 and this_is_caps then
+		caps_table[origin] = 1
+	elseif caps_table[origin] > 0 and this_is_caps then
 		irc_msg(params[1], origin..": calm down with the caps lock, bro!")
 	end
 	

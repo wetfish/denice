@@ -45,33 +45,36 @@ function talk_parse(event, origin, params)
 	for i=1,(#words+1) do
 		local word = words[i]
 		
-		-- add to recent_words if above threshold
-		if word ~= nil and word:len() >= 7 then
-			if recent_words[params[1]] == nil then
-				recent_words[params[1]] = {}
+		if i > 1 or word:sub(1,1) ~= "!" then
+
+			-- add to recent_words if above threshold
+			if word ~= nil and word:len() >= 7 then
+				if recent_words[params[1]] == nil then
+					recent_words[params[1]] = {}
+				end
+				recent_words[params[1]][#(recent_words[params[1]])+1] = word
+				while #(recent_words[params[1]]) > 12 do
+					table.remove(recent_words[params[1]], 1)
+				end
 			end
-			recent_words[params[1]][#(recent_words[params[1]])+1] = word
-			while #(recent_words[params[1]]) > 12 do
-				table.remove(recent_words[params[1]], 1)
-			end
-		end
 		
-		-- add to dictionary
-		if word1 ~= nil then
-			local temp1,temp2 = word,word2
-			if temp1 == nil then
-				temp1 = ""
+			-- add to dictionary
+			if word1 ~= nil then
+				local temp1,temp2 = word,word2
+				if temp1 == nil then
+					temp1 = ""
+				end
+				if temp2 == nil then
+					temp2 = ""
+				end
+				sql_fquery(
+					"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
+					"VALUES('"..sql_escape(temp2).."','"..sql_escape(word1).."','"..sql_escape(temp1).."','"..os.time().."')"
+				)
 			end
-			if temp2 == nil then
-				temp2 = ""
-			end
-			sql_fquery(
-				"INSERT INTO `dictionary` (`Word1`, `Word2`, `Word3`, `DateAdded`) " ..
-				"VALUES('"..sql_escape(temp2).."','"..sql_escape(word1).."','"..sql_escape(temp1).."','"..os.time().."')"
-			)
+			word2 = word1		
+			word1 = word
 		end
-		word2 = word1		
-		word1 = word
 	end
 end
 register_callback("CHANNEL", "talk_parse")
