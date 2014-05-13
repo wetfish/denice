@@ -55,14 +55,16 @@ void event_command(irc_session_t *session, const char *event, const char *origin
 
 	// split into 'command' and 'params' parts
 	for(parms = tmp; parms < end && *parms!=' '; parms++);
-	*(parms++) = '\0';
+
+	if(parms < end)
+		*(parms++) = '\0';
+	else
+		*parms = '\0';
 
 	cmd = malloc(strlen(tmp) + 1);
 	for(i = 0; i < strlen(tmp); i++)
 		cmd[i] = tolower(tmp[i]);
 	cmd[i] = '\0';
-
-	free(tmp);
 
         printf("Received '%s' command, params '%s'.\n", cmd, parms);
 
@@ -92,6 +94,9 @@ void event_command(irc_session_t *session, const char *event, const char *origin
                 }
 		called++;
         }
+
+	free(tmp);
+	free(cmd);
 	
 	// legacy support
 	if(called < 1)
