@@ -13,17 +13,17 @@ function caps_callback(event, origin, params)
 	end
 	
 	-- increment or decrement entry
-	if this_is_caps then
+	if this_is_caps and params[2]:len() > 3 then
 		caps_table[origin] = caps_table[origin] + 1
 	elseif caps_table[origin] > 0 then
 		caps_table[origin] = caps_table[origin] - 1
 	end
 	
 	-- determine if we should kick or warn
-	if caps_table[origin] > 1 and this_is_caps then
+	if caps_table[origin] > 4 and this_is_caps then
 		irc_raw("KICK "..params[1].." "..origin.." :i warned you!")
 		caps_table[origin] = 1
-	elseif caps_table[origin] > 0 and this_is_caps then
+	elseif caps_table[origin] > 3 and this_is_caps then
 		irc_msg(params[1], origin..": calm down with the caps lock, bro!")
 	end
 	
