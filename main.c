@@ -84,8 +84,8 @@ int main(int argc, char** argv){
 	irc_callbacks.event_umode   = event_generic;
 	irc_callbacks.event_topic   = event_generic;
 	irc_callbacks.event_kick    = event_generic;
-	irc_callbacks.event_channel = event_generic;
-	irc_callbacks.event_privmsg = event_generic;
+	irc_callbacks.event_channel = event_command;
+	irc_callbacks.event_privmsg = event_command;
 	irc_callbacks.event_notice  = event_generic;
 	irc_callbacks.event_unknown = event_generic;
 	irc_callbacks.event_invite  = event_generic;

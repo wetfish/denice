@@ -89,6 +89,23 @@ static int l_register_callback(lua_State *s){
 	return 0;
 }
 
+// Lua function: register_command(cmd, func)
+static int l_register_command(lua_State *s){
+	// check that we're operating on the 'real' lua state and not a temp one
+	if(s == L){
+		size_t type_len, func_len;
+		char* cb_str;
+		const char* type_str = luaL_checklstring(s, 1, &type_len);
+		const char* func_str = luaL_checklstring(s, 2, &func_len);
+		cb_str = malloc(strlen(type_str) + 2);
+		cb_str[0] = '!';
+		strcpy(cb_str+1, type_str);
+		printf("Registering callback '%s' for command '%s'.\n", func_str, cb_str);
+		cbtable_add(cb_str, func_str);
+		free(cb_str);
+	}
+	return 0;
+}
 
 /* IRC COMMAND SECTION */
 
@@ -120,7 +137,7 @@ static int l_irc_msg(lua_State *L){
 	size_t target_len = 0, message_len = 0;
 	const char* target_str  = luaL_checklstring(L, 1, &target_len);
 	const char* message_str = luaL_checklstring(L, 2, &message_len);
-	printf("Sending message of length %d to %s: '%s'.\n", message_len, target_str, message_str);
+	printf("Sending message of length %d to %s: '%s'.\n", (int)message_len, target_str, message_str);
 	if(irc_cmd_msg(I, target_str, message_str))
 		irc_error(I, 0);
 	return 0;
@@ -503,6 +520,9 @@ void register_lua_functions(lua_State* L){
 
 	lua_pushcfunction(L, l_register_callback);
 	lua_setglobal(L, "register_callback");
+
+	lua_pushcfunction(L, l_register_command);
+	lua_setglobal(L, "register_command");
 	
 	lua_pushcfunction(L, l_irc_join);
 	lua_setglobal(L, "irc_join");
