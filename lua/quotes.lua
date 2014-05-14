@@ -1,24 +1,17 @@
-function quote_callback(event, origin, params)
-	if params[2]:sub(0,6) == "!quote" then
-		quote(params[2]:sub(2), params[1])
+function quote_cmd(event,origin,params) -- content,channel)
+	if params[2] == nil or params[2] == "" then
+		irc_msg(params[1],randQuote())
+	elseif params[2]:sub(0,1) == "*" then
+		irc_msg(params[1],quoteByQuote(params[2]:sub(2)))
+	elseif params[2]:sub(0,7) == "&latest" then
+		irc_msg(params[1],quoteLatest())
+	elseif params[2]:sub(0,1) == "#" then
+		irc_msg(params[1],quoteByIndex(params[2]:sub(2)))
+	elseif params[2]:sub(0,3) == "add" then
+		irc_msg(params[1],forceQuote(params[2]:sub(5)))
 	end
 end
-register_callback("CHANNEL", "quote_callback")
-
-function quote(content,channel)
-	print("quote("..content..","..channel..")")
-	if content == "quote" then
-		irc_msg(channel,randQuote())
-	elseif content:sub(0,7) == "quote *" then
-		irc_msg(channel,quoteByQuote(content:sub(8)))
-	elseif content:sub(0,13) == "quote &latest" then
-		irc_msg(channel,quoteLatest())
-	elseif content:sub(0,7) == "quote #" then
-		irc_msg(channel,quoteByIndex(content:sub(8)))
-	elseif content:sub(0,9) == "quote add" then
-		irc_msg(channel,forceQuote(content:sub(11)))
-	end
-end
+register_command("quote", "quote_cmd")
 
 function formatQuote(index,quote,time)
 	if quote == nil then

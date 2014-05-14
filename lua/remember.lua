@@ -1,12 +1,12 @@
 function remember_callback(event, origin, params)
-	local msg_parts = str_split_max(params[2], " ",2)
-	if msg_parts[1] == "!remember" then
-		remember(msg_parts[2], origin, params[1])
-	elseif msg_parts[1] == "!forget" then
-		forget(msg_parts[2], origin, params[1])
+	if event == "!remember" then
+		remember(params[2], origin, params[1])
+	elseif event == "!forget" then
+		forget(params[2], origin, params[1])
 	end
 end
-register_callback("CHANNEL", "remember_callback")
+register_command("remember", "remember_callback")
+register_command("forget", "remember_callback")
 
 function validReq(s)
 	if s:gsub("%%",""):len() > 2 then

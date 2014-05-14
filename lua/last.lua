@@ -3,24 +3,29 @@ lastfm_table  = {}
 lastfm_apikey = '7ae41b20066f4855dcd1a878e590b985'
 
 function last_callback(event, origin, params)
-	local msg_parts = str_split_max(params[2], " ",2)
-	if msg_parts[1] == "!np" then
-		lastfm_np2(msg_parts[2],origin,params[1])
-	elseif msg_parts[1] == "!last" then
-		lastfm_account(msg_parts[2],origin,params[1])
-	elseif msg_parts[1] == "!tags" then
-		lastfm_tags(msg_parts[2],origin,params[1])
-	elseif msg_parts[1] == "!similar" then
-		lastfm_similar(msg_parts[2],origin,params[1])
-	elseif msg_parts[1] == "!tagged" then
-		lastfm_tagged(msg_parts[2],origin,params[1])
-	elseif msg_parts[1] == "!compare" then
-		lastfm_compare(msg_parts[2],origin,params[1])
-	elseif msg_parts[1] == "!myartists" then
-		lastfm_myartists(msg_parts[2],origin,params[1])
+	if event == "!np" then
+		lastfm_np2(params[2],origin,params[1])
+	elseif event == "!last" then
+		lastfm_account(params[2],origin,params[1])
+	elseif event == "!tags" then
+		lastfm_tags(params[2],origin,params[1])
+	elseif event == "!similar" then
+		lastfm_similar(params[2],origin,params[1])
+	elseif event == "!tagged" then
+		lastfm_tagged(params[2],origin,params[1])
+	elseif event == "!compare" then
+		lastfm_compare(params[2],origin,params[1])
+	elseif event == "!myartists" then
+		lastfm_myartists(params[2],origin,params[1])
 	end
 end
-register_callback("CHANNEL", "last_callback")
+register_command("np", "last_callback")
+register_command("last", "last_callback")
+register_command("tags", "last_callback")
+register_command("similar", "last_callback")
+register_command("tagged", "last_callback")
+register_command("compare", "last_callback")
+register_command("myartists", "last_callback")
 
 function getNodes(t,nodeName,first)
 	local returnNodes = {}

@@ -1,10 +1,7 @@
 function seen_callback(event,origin,params)
-	local p = str_split(params[2], " ")
-	if p[1] == "!seen" then
-		seen(p[2], origin, params[1])
-	end
+	seen(params[2], origin, params[1])
 end
-register_callback("CHANNEL","seen_callback")
+register_command("seen","seen_callback")
 
 function seen(message,user,channel)
         local row = sql_query_fetch("SELECT `timestamp`,`message`,`event`,`location` FROM `seen` WHERE `nick`='"..sql_escape(message).."'")

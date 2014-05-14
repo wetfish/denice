@@ -1,10 +1,7 @@
 function weather_callback(event, origin, params)
-	local msg_parts = str_split_max(params[2], " ",2)
-	if msg_parts[1] == "!weather" then
-		weather(msg_parts[2], origin, params[1])
-	end
+	weather(params[2], origin, params[1])
 end
-register_callback("CHANNEL", "weather_callback")
+register_command("weather", "weather_callback")
 
 function weather(zip,user,channel)
     local http = require("socket.http")

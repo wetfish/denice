@@ -1,16 +1,18 @@
 function spam_callback(event, origin, params)
-	local parts = str_split_max(params[2], " ", 2)
-	if parts[1] == "!spam" then
-		spam(parts[2], origin, params[1])
-	elseif parts[1] == "!rainbow" then
-		rainbow(parts[2], origin, params[1])
-	elseif parts[1] == "!bigrainbow" then
-		bigrainbow(parts[2], origin, params[1])
-	elseif parts[1] == "!biggerrainbow" then
-		biggerrainbow(parts[2], origin, params[1])
+	if event == "!spam" then
+		spam(params[2], origin, params[1])
+	elseif event == "!rainbow" then
+		rainbow(params[2], origin, params[1])
+	elseif event == "!bigrainbow" then
+		bigrainbow(params[2], origin, params[1])
+	elseif event == "!biggerrainbow" then
+		biggerrainbow(params[2], origin, params[1])
 	end
 end
-register_callback("CHANNEL", "spam_callback")
+register_command("spam", "spam_callback")
+register_command("rainbow", "spam_callback")
+register_command("bigrainbow", "spam_callback")
+register_command("biggerrainbow", "spam_callback")
 
 
 function spam(word,user,target)
