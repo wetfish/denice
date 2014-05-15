@@ -361,10 +361,13 @@ static int l_sql_query(lua_State *L){
 
 // Lua function: sql_fquery(query)
 static int l_sql_fquery(lua_State *L){
+	MYSQL_RES *res;
 	size_t query_len = 0;
 	const char* query_str = luaL_checklstring(L, 1, &query_len);
 	//printf("Executing SQL query: %s\n", query_str);
 	mysql_query(S, query_str);
+	res = mysql_store_result(S);
+	mysql_free_result(res);
 	return 0;
 }
 
@@ -425,7 +428,8 @@ static int l_sql_num_fields(lua_State *L){
 
 // Lua function: sql_affected_rows()
 static int l_sql_affected_rows(lua_State *L){
-	lua_pushnumber(L, mysql_affected_rows(S));
+	int num = mysql_affected_rows(S);
+	lua_pushnumber(L, (double) num);
 	return 1;
 }
 
