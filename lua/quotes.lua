@@ -9,6 +9,8 @@ function quote_cmd(event,origin,params) -- content,channel)
 		irc_msg(params[1],quoteByIndex(params[2]:sub(2)))
 	elseif params[2]:sub(0,3) == "add" then
 		irc_msg(params[1],forceQuote(params[2]:sub(5)))
+	elseif params[2]:sub(0,3) == "del" and origin == get_config("bot:master") then
+		irc_msg(params[1],delQuote(params[2]:sub(5)))
 	end
 end
 register_command("quote", "quote_cmd")
@@ -62,6 +64,6 @@ function forceQuote(content)
 end
 
 function delQuote(index)
-	sql_fquery("UPDATE `quotes` SET `Delete` = '1' WHERE `Index` = '"..sql_escape(index).."'")
+	sql_query("UPDATE `quotes` SET `Delete` = '1' WHERE `Index` = '"..sql_escape(index).."'")
 	return "Marked quote #"..index.." for deletion"
 end

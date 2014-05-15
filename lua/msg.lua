@@ -44,6 +44,16 @@ function message_callback(event, origin, params)
 			for i=0,n do
 				talk(send_to)
 			end
+		elseif msg_parts[1] == "!clean" then
+			local thresh = os.time() - 2 * 7 * 24 * 60 * 60;
+			sql_fquery("DELETE FROM `dictionary` WHERE `DateAdded` < '"..thresh.."'")
+			irc_msg(send_to, "Deleted "..sql_affected_rows().." old dictionary rows")
+			sql_fquery("DELETE FROM `quotes` WHERE `Delete` = '1'")		
+			irc_msg(send_to, "Deleted "..sql_affected_rows().." flagged quotes")
+			sql_fquery("OPTIMIZE TABLE `dictionary`")
+			irc_msg(send_to, "Optimized dictionary table")
+			sql_fquery("OPTIMIZE TABLE `quotes`")
+			irc_msg(send_to, "Optimized quotes table")
 		elseif msg_parts[1] == "!quit" then
 			irc_quit("bye bye")
 		elseif msg_parts[1] == "!rehash" then
