@@ -104,7 +104,7 @@ int main(int argc, char** argv){
 			error(1, "Unable to create IRC session... probably out of memory\n");
 		irc_option_set(I, LIBIRC_OPTION_STRIPNICKS);
 		irc_option_set(I, LIBIRC_OPTION_SSL_NO_VERIFY);
-		irc_option_set(I, LIBIRC_OPTION_DEBUG);
+		//irc_option_set(I, LIBIRC_OPTION_DEBUG);
 		
 		// initialize irc server connection
 		if(irc_connect(I,
