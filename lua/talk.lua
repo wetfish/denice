@@ -167,9 +167,9 @@ function climb_tree(leaf)
 	local phrase = ""
 	while leaf ~= nil do
 		if leaf.value ~= nil and ((leaf.parent ~= nil and leaf.parent.parent ~= nil and #(leaf.subnodes) > 0) or leaf.value:len() > 0) then
-			if phrase:len() then
+			if phrase:len() > 0 and leaf.value:len() >0 then
 				phrase = leaf.value .. " " .. phrase
-			else
+			elseif leaf.value:len() > 0 then
 				phrase = leaf.value
 			end
 		end
