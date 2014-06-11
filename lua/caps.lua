@@ -15,7 +15,7 @@ function caps_callback(event, origin, params)
 	-- increment or decrement entry
 	if this_is_caps and params[2]:len() > 3 then
 		caps_table[origin] = caps_table[origin] + 1
-	elseif caps_table[origin] > 0 then
+	elseif caps_table[origin] > 0 and params[2]:len() > 3 then
 		caps_table[origin] = caps_table[origin] - 1
 	end
 	
