@@ -31,3 +31,10 @@ CREATE TABLE `seen` (
   UNIQUE KEY `nick` (`nick`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE `greeting` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Nick` varchar(32) NOT NULL,
+  `Greeting` text,
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
