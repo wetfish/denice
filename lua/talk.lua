@@ -141,7 +141,7 @@ function extend_tree(working_node, data_table)
 
 	-- remove nodes we already hit
 	for i,v in pairs(rows) do
-		if data_table.hit_nodes[v.Index] ~= nil then
+		if data_table.hit_nodes[v.Index] ~= nil and data_table.hit_nodes[v.Index] > data_table.max_hits then
 			table.remove(rows, i)
 		end
 	end
@@ -150,7 +150,10 @@ function extend_tree(working_node, data_table)
 		for i,v in pairs(rows) do
 			local new_node = {subnodes={},parent=working_node,value=v.Word3,depth=working_node.depth+1}
 			working_node.subnodes[#(working_node.subnodes)+1] = new_node
-			data_table.hit_nodes[v.Index] = true
+			if data_table.hit_nodes[v.Index] == nil then
+				data_table.hit_nodes[v.Index] = 0
+			end
+			data_table.hit_nodes[v.Index] = data_table.hit_nodes[v.Index] + 1
 			extend_tree(new_node, data_table)
 		end
 	else -- perhaps should check if there are 'really' no rows or if there are no unhit rows...
@@ -192,7 +195,8 @@ function talk(channel, retmode, seed)
 		max_nodes={},  -- track leaves representing strings of maximum length
 		max_depth=25,  -- maximum word count
 		best_depth=0,  -- current top word count
-		max_entries=15 -- maximum number of leaves to complete before stopping
+		max_entries=15,-- maximum number of leaves to complete before stopping
+		max_hits=5     -- maximum number of times to hit one node
 	}
 
 	local rows = nil
@@ -238,7 +242,7 @@ function talk(channel, retmode, seed)
 		else
 			local selected_row = 1
 			
-			while selected_row <= #rows and data_table.hit_nodes[rows[selected_row].Index] ~= nil do
+			while selected_row <= #rows and not (data_table.hit_nodes[rows[selected_row].Index] == nil or data_table.hit_nodes[rows[selected_row].Index] < data_table.max_hits) do
 				selected_row = selected_row + 1
 			end
 			
@@ -246,7 +250,10 @@ function talk(channel, retmode, seed)
 				hit_end = true
 			else
 				t:push(rows[1].Word1)
-				data_table.hit_nodes[rows[1].Index] = true
+				if data_table.hit_nodes[rows[1].Index] == nil then
+					data_table.hit_nodes[rows[1].Index] = 0
+				end
+				data_table.hit_nodes[rows[1].Index] = data_table.hit_nodes[rows[1].Index] + 1
 			end
 		end
 		num_steps = num_steps + 1
