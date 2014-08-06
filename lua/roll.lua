@@ -28,7 +28,7 @@ function roll_callback(event, origin, params)
 		plus = -1 * minus
 	end
 
-	if num == nil or size == nil or num > 10 or num < 1 or size < 1 then
+	if num == nil or size == nil or num > 10 or num < 1 or size < 1 or size > 100 then
 		irc_msg(params[1], origin..": don't be a dick")
 		return
 	end
