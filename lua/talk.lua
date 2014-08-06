@@ -3,6 +3,16 @@ if recent_words == nil then
 	recent_words = {}
 end
 
+-- returns true if the channel is configured to not have random chatter
+function no_talk(channel)
+	for i in string.gmatch(get_config("bot:notalk"),"#%S+") do
+		if i == channel then
+			return true
+		end
+	end
+	return false
+end
+
 -- send list of recent words from a channel
 function dump_recent_words(channel, send_to)
 	if recent_words[channel] == nil or #(recent_words[channel]) < 1 then

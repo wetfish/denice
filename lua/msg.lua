@@ -10,7 +10,7 @@ function message_callback(event, origin, params)
 		send_to = origin
 	else
 		-- reply to channel messages with probability from config
-		if math.random(1, 100) < get_config("bot:talk_rate")*100 then
+		if math.random(1, 100) < get_config("bot:talk_rate")*100 and not no_talk(send_to) then
 			if math.random(1, 100) > 50 then
 				talk(send_to, nil, get_recent_word(params[1]))
 			else
@@ -23,7 +23,7 @@ function message_callback(event, origin, params)
 		talk(send_to,nil,msg_parts[2])
 	elseif msg_parts[1] == "!atalk" then
 		talk(send_to, nil, get_recent_word(params[1]))
-	elseif msg_parts[1]:sub(0,my_nick:len()) == my_nick then
+	elseif msg_parts[1]:sub(0,my_nick:len()) == my_nick and not no_talk(send_to) then
 		local words = big_words(msg_parts[2], 5)
 		words[#words+1] = origin
 		talk(send_to, nil, words[math.random(1,#words)])
@@ -65,6 +65,10 @@ function message_callback(event, origin, params)
 			end
 		elseif msg_parts[1] == "!opme" then
 			irc_cmode(params[1], "+o "..my_master)
+		elseif msg_parts[1] == "!hopme" then
+			irc_cmode(params[1], "+h "..my_master)
+		elseif msg_parts[1] == "!vme" then
+			irc_cmode(params[1], "+v "..my_master)
 		end
 	end
 end
