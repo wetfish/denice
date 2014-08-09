@@ -96,8 +96,6 @@ function duel_callback(event, origin, params)
 		return
 	end
 
-	duel_cooldown[origin] = os.time()
-
 	local p1_stats = sql_query_fetch("SELECT `armor`,`attack`,`damage`,`level`,`xp`,`hp`,`title`,`class` FROM `duelchars` WHERE `nick`='"..sql_escape(p1_nick).."'")
 	local p2_stats = sql_query_fetch("SELECT `armor`,`attack`,`damage`,`level`,`xp`,`hp`,`title`,`class` FROM `duelchars` WHERE `nick`='"..sql_escape(p2_nick).."'")
 
@@ -110,6 +108,8 @@ function duel_callback(event, origin, params)
 		irc_msg(params[1], origin.." : you cannot duel "..params[2].." because they do not have a character!")
 		return
 	end
+
+	duel_cooldown[origin] = os.time()
 
 	p1_stats = p1_stats[1]
 	p2_stats = p2_stats[1]
