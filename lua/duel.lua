@@ -111,6 +111,11 @@ function duel_callback(event, origin, params)
 	p1_stats = p1_stats[1]
 	p2_stats = p2_stats[1]
 
+	p1_maxhp = p1_stats.hp
+	p2_maxhp = p2_stats.hp
+	p1_blood = 0
+	p2_blood = 0
+
 	irc_msg("#duel", p1_nick .. ", " .. p1_stats.title .. " (level " .. p1_stats.level .. " " .. p1_stats.class .. ") has challenged " .. p2_nick .. ", " .. p2_stats.title ..
 		" (level " .. p2_stats.level .. " " .. p2_stats.class .. ") to a duel!")
 
@@ -122,15 +127,25 @@ function duel_callback(event, origin, params)
 		local p2_dmg = math.random(1,6) + p2_stats.damage		
 
 		if p1_roll > tonumber(p2_stats.armor) then
-			irc_msg("#duel", p1_nick .. " hits " .. p2_nick .. " for " .. p1_dmg .. " damage!")
+			local append = ""
 			p2_stats.hp = p2_stats.hp - p1_dmg
+			if p2_stats.hp < math.floor(p2_maxhp / 2) and p2_blood == 0 then
+				p2_blood = 1
+				append = " " .. p2_nick .. " is now bloodied!"
+			end
+			irc_msg("#duel", p1_nick .. " hits " .. p2_nick .. " for " .. p1_dmg .. " damage!"..append)
 		else
 			irc_msg("#duel", p1_nick .. " misses a blow at " .. p2_nick .. ".")
 		end
 
 		if p2_roll > tonumber(p1_stats.armor) then
-			irc_msg("#duel", p2_nick .. " hits " .. p1_nick .. " for " .. p2_dmg .. " damage!")
+			local append = ""
 			p1_stats.hp = p1_stats.hp - p2_dmg
+			if p1_stats.hp < math.floor(p1_maxhp / 2) and p1_blood == 0 then
+				p1_blood = 1
+				append = " " .. p1_nick .. " is now bloodied!"
+			end
+			irc_msg("#duel", p2_nick .. " hits " .. p1_nick .. " for " .. p2_dmg .. " damage!"..append)
 		else
 			irc_msg("#duel", p2_nick .. " misses a blow at " .. p1_nick .. ".")
 		end
@@ -243,7 +258,7 @@ function duellevel_callback(event, origin, params)
 				stats.xp = stats.xp - req_xp
 				stats.level = stats.level + 1
 				req_xp = math.floor((stats.level - 1) / 2) + 10
-				sql_fquery("UPDATE `duelchars` SET `level`=`level`+1, `xp`=`xp`-"..req_xp..", `"..column.."`=`"..column.."`+1 WHERE `nick`='"..sql_escape(origin).."'")
+				sql_fquery("UPDATE `duelchars` SET `level`=`level`+1, `xp`='"..stats.xp.."', `"..column.."`=`"..column.."`+1 WHERE `nick`='"..sql_escape(origin).."'")
 				irc_msg(params[1], origin .. ", " .. stats.title .. " - level " .. stats.level .. " " .. stats.class .. " - " ..
 					stats.armor .. " ARMOR / " .. stats.attack .. " ATTACK / " ..  stats.damage .. " DAMAGE / " .. stats.hp .. " HEALTH - " ..
 					stats.xp .. "/" .. req_xp .. " XP")
