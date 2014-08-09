@@ -13,8 +13,8 @@ function duelchar_callback(event, origin, params)
 		params[1] = origin
 	end
 	
-	local class = args[1]
-	local spec  = args[2]
+	local class = args[1]:upper()
+	local spec  = args[2]:upper()
 	local title = args[3]
 
 	local stats = sql_query_fetch("SELECT `ac`,`attack`,`damage`,`hp` FROM `duelclasses` WHERE `class`='" .. sql_escape(class) .. "'")
@@ -24,13 +24,13 @@ function duelchar_callback(event, origin, params)
 	end
 	stats = stats[1]
 
-	if spec:upper() == "ARMOR" then
+	if spec == "ARMOR" then
 		stats.ac = stats.ac + 3
-	elseif spec:upper() == "ATTACK" then
+	elseif spec == "ATTACK" then
 		stats.attack = stats.attack + 3
-	elseif spec:upper() == "DAMAGE" then
+	elseif spec == "DAMAGE" then
 		stats.damage = stats.damage + 3
-	elseif spec:upper() == "HEALTH" then
+	elseif spec == "HEALTH" then
 		stats.hp = stats.hp + 3
 	else
 		irc_msg(params[1], "The specialty you selected is not valid")
@@ -38,13 +38,16 @@ function duelchar_callback(event, origin, params)
 	end
 
 	sql_fquery("DELETE FROM `duelchars` WHERE `nick`='"..sql_escape(origin).."'")
+	sql_fquery("DELETE FROM `duelstats` WHERE `player1`='"..sql_escape(origin).."' OR `player2`='"..sql_escape(origin).."'")
+
+	class = class:lower()
 
 	sql_fquery(
 		"INSERT INTO `duelchars` (`nick`,`title`,`armor`,`attack`,`damage`,`level`,`xp`,`hp`,`class`) VALUES " ..
 		"('"..sql_escape(origin).."', '"..sql_escape(title).."', '"..stats.ac.."', '"..stats.attack.."', '"..stats.damage.."', '1', '0', '"..stats.hp.."', '"..sql_escape(class).."')"
 	)
 
-	irc_msg(params[1], "Welcome, "..origin.." "..title.."! Your stats are: "..stats.ac.." ARMOR / "..stats.attack.." ATTACK / "..stats.damage.." DAMAGE / "..stats.hp .." HEALTH")
+	irc_msg(params[1], "Welcome, "..origin..", "..title.."! Your stats are: "..stats.ac.." ARMOR / "..stats.attack.." ATTACK / "..stats.damage.." DAMAGE / "..stats.hp .." HEALTH")
 
 end
 register_command("duelchar", "duelchar_callback")
@@ -78,7 +81,7 @@ function duelhelp_callback(event, origin, params)
 	irc_msg(origin, "== LEVELING UP ==")
 	irc_msg(origin, "When your XP reaches 10 + (LEVEL - 1)/2 you may level up.")
 	irc_msg(origin, "Leveling up allows you to increase one of your stats by +1.")
-	irc_msg(origin, "To do so, use !duellevel <stat> (the stats are the same as those you can choose as specialties.")
+	irc_msg(origin, "To do so, use !duellevel <stat> (the stats are the same as those you can choose as specialties.)")
 	irc_msg(origin, "You can check your level progress by performing !duellevel without a stat as an argument.")	
 	irc_msg(origin, " ")
 end
@@ -116,8 +119,8 @@ function duel_callback(event, origin, params)
 	p1_blood = 0
 	p2_blood = 0
 
-	irc_msg("#duel", p1_nick .. ", " .. p1_stats.title .. " (level " .. p1_stats.level .. " " .. p1_stats.class .. ") has challenged " .. p2_nick .. ", " .. p2_stats.title ..
-		" (level " .. p2_stats.level .. " " .. p2_stats.class .. ") to a duel!")
+	irc_msg("#duel", p1_nick .. ", " .. p1_stats.title .. ", (level " .. p1_stats.level .. " " .. p1_stats.class .. ") has challenged " .. p2_nick .. ", " .. p2_stats.title ..
+		", (level " .. p2_stats.level .. " " .. p2_stats.class .. ") to a duel!")
 
 	while tonumber(p1_stats.hp) > 0 and tonumber(p2_stats.hp) > 0 do
 		local p1_roll = math.random(1,20) + p1_stats.attack
@@ -168,7 +171,7 @@ function duel_callback(event, origin, params)
 	end
 
 	if tonumber(p1_stats.hp) > tonumber(p2_stats.hp) then
-		battle_str = p1_nick .. ", " .. p1_stats.title .. " has defeated " .. p2_nick .. " by " .. (p1_stats.hp - p2_stats.hp) .. " HP!"
+		battle_str = p1_nick .. ", " .. p1_stats.title .. ", has defeated " .. p2_nick .. " by " .. (p1_stats.hp - p2_stats.hp) .. " HP!"
 		if p1_stats.level / 2 <= tonumber(p2_stats.level) then
 			p1_stats.xp = p1_stats.xp + 1
 			battle_str = battle_str .. " " .. p1_nick .. " now has " .. p1_stats.xp .. "/" .. math.floor(10+(p1_stats.level-1)/2) .. " XP."
@@ -185,7 +188,7 @@ function duel_callback(event, origin, params)
 			battle_str = battle_str .. " " .. p1_nick .. "'s record against " .. p2_nick .. " is " .. stat_row.p2wins .. " wins, " .. stat_row.p1wins .. " losses."
 		end
 	elseif tonumber(p1_stats.hp) < tonumber(p2_stats.hp) then
-		battle_str = p2_nick .. ", " .. p2_stats.title .. " has defeated " .. p1_nick .. " by " .. (p2_stats.hp - p1_stats.hp) .. " HP!"
+		battle_str = p2_nick .. ", " .. p2_stats.title .. ", has defeated " .. p1_nick .. " by " .. (p2_stats.hp - p1_stats.hp) .. " HP!"
 		if p2_stats.level / 2 <= tonumber(p1_stats.level) then
 			p2_stats.xp = p2_stats.xp + 1
 			battle_str = battle_str .. " " .. p2_nick .. " now has " .. p2_stats.xp .. "/" .. math.floor(10+(p2_stats.level-1)/2) .. " XP."
@@ -269,3 +272,30 @@ function duellevel_callback(event, origin, params)
 	end
 end
 register_command("duellevel", "duellevel_callback")
+
+function duellist_callback(event, origin, params)
+	local t = sql_query_fetch("SELECT `nick`,`title`,`level`,`class` FROM `duelchars` ORDER BY `level` DESC")
+	local str = "Characters registered: "
+
+	if params[1] == get_config("bot:nick") then
+		params[1] = origin
+	end
+
+	for i,v in pairs(t) do
+		str = str .. v.nick .. ", " .. v.title .." - level " .. v.level .." ".. v.class .." / "
+
+		if str:len() > 200 then
+			if i == #t then
+				str = str:sub(1, str:len() - 3)
+			end
+			irc_msg(params[1], str)
+			str = ""
+		end
+	end
+
+	if str:len() > 0 then
+		str = str:sub(1, str:len() - 3)
+		irc_msg(params[1], str)
+	end
+end
+register_command("duellist", "duellist_callback")
