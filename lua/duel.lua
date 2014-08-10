@@ -91,6 +91,11 @@ function duel_callback(event, origin, params)
 	local p1_nick = origin
 	local p2_nick = cleanSpace(params[2])
 
+	if p1_nick == p2_nick then
+		irc_msg(params[1], origin.." : you cannot duel yourself!")
+		return
+	end
+
 	if duel_cooldown[origin] ~= nil and duel_cooldown[origin] > os.time() - 60 then
 		irc_msg(params[1], origin.. " : you must wait " .. (60 - (os.time() - duel_cooldown[origin])) .. " seconds to duel again.")
 		return
