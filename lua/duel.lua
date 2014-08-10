@@ -79,7 +79,7 @@ function duelhelp_callback(event, origin, params)
 	irc_msg(origin, " ")
 
 	irc_msg(origin, "== LEVELING UP ==")
-	irc_msg(origin, "When your XP reaches 10 + (LEVEL - 1)/2 you may level up.")
+	irc_msg(origin, "When your XP reaches 10 + (LEVEL - 1) * 2 you may level up.")
 	irc_msg(origin, "Leveling up allows you to increase one of your stats by +1.")
 	irc_msg(origin, "To do so, use !duellevel <stat> (the stats are the same as those you can choose as specialties.)")
 	irc_msg(origin, "You can check your level progress by performing !duellevel without a stat as an argument.")	
@@ -174,7 +174,7 @@ function duel_callback(event, origin, params)
 		battle_str = p1_nick .. ", " .. p1_stats.title .. ", has defeated " .. p2_nick .. " by " .. (p1_stats.hp - p2_stats.hp) .. " HP!"
 		if p1_stats.level / 2 <= tonumber(p2_stats.level) then
 			p1_stats.xp = p1_stats.xp + 1
-			battle_str = battle_str .. " " .. p1_nick .. " now has " .. p1_stats.xp .. "/" .. math.floor(10+(p1_stats.level-1)/2) .. " XP."
+			battle_str = battle_str .. " " .. p1_nick .. " now has " .. p1_stats.xp .. "/" .. math.floor(10+(p1_stats.level-1)*2) .. " XP."
 			sql_fquery("UPDATE `duelchars` SET `xp`=`xp`+1 WHERE `nick`='"..sql_escape(p1_nick).."'")
 		end
 
@@ -191,7 +191,7 @@ function duel_callback(event, origin, params)
 		battle_str = p2_nick .. ", " .. p2_stats.title .. ", has defeated " .. p1_nick .. " by " .. (p2_stats.hp - p1_stats.hp) .. " HP!"
 		if p2_stats.level / 2 <= tonumber(p1_stats.level) then
 			p2_stats.xp = p2_stats.xp + 1
-			battle_str = battle_str .. " " .. p2_nick .. " now has " .. p2_stats.xp .. "/" .. math.floor(10+(p2_stats.level-1)/2) .. " XP."
+			battle_str = battle_str .. " " .. p2_nick .. " now has " .. p2_stats.xp .. "/" .. math.floor(10+(p2_stats.level-1)*2) .. " XP."
 			sql_fquery("UPDATE `duelchars` SET `xp`=`xp`+1 WHERE `nick`='"..sql_escape(p2_nick).."'")
 		end
 	
@@ -231,7 +231,7 @@ function duellevel_callback(event, origin, params)
 		stats = stats[1]
 	end
 
-	local req_xp = math.floor((stats.level - 1) / 2) + 10
+	local req_xp = math.floor((stats.level - 1) * 2) + 10
 
 	if params[2] == nil or params[2] == "" then
 		irc_msg(params[1], origin .. ", " .. stats.title .. " - level " .. stats.level .. " " .. stats.class .. " - " ..
@@ -260,7 +260,7 @@ function duellevel_callback(event, origin, params)
 			if column ~= "" then
 				stats.xp = stats.xp - req_xp
 				stats.level = stats.level + 1
-				req_xp = math.floor((stats.level - 1) / 2) + 10
+				req_xp = math.floor((stats.level - 1) * 2) + 10
 				sql_fquery("UPDATE `duelchars` SET `level`=`level`+1, `xp`='"..stats.xp.."', `"..column.."`=`"..column.."`+1 WHERE `nick`='"..sql_escape(origin).."'")
 				irc_msg(params[1], origin .. ", " .. stats.title .. " - level " .. stats.level .. " " .. stats.class .. " - " ..
 					stats.armor .. " ARMOR / " .. stats.attack .. " ATTACK / " ..  stats.damage .. " DAMAGE / " .. stats.hp .. " HEALTH - " ..
