@@ -128,32 +128,45 @@ function duel_callback(event, origin, params)
 		", (level " .. p2_stats.level .. " " .. p2_stats.class .. ") to a duel!")
 
 	while tonumber(p1_stats.hp) > 0 and tonumber(p2_stats.hp) > 0 do
-		local p1_roll = math.random(1,20) + p1_stats.attack
-		local p2_roll = math.random(1,20) + p2_stats.attack
+		local p1_roll = math.random(1,20)
+		local p2_roll = math.random(1,20)
 
-		local p1_dmg = math.random(1,6) + p1_stats.damage
-		local p2_dmg = math.random(1,6) + p2_stats.damage		
+		local p1_dmg = math.random(1,10) + p1_stats.damage
+		local p2_dmg = math.random(1,10) + p2_stats.damage		
 
-		if p1_roll > tonumber(p2_stats.armor) then
+		local p1_crit = ""
+		local p2_crit = ""
+
+		if p1_roll == 20 then
+			p1_dmg = 10 + p1_stats.damage
+			p1_crit = " critically"
+		end
+
+		if p2_roll == 20 then
+			p2_dmg = 10 + p1_stats.damage
+			p2_crit = " critically"
+		end
+
+		if p1_roll == 20 or p1_roll + p1_stats.attack > tonumber(p2_stats.armor) then
 			local append = ""
 			p2_stats.hp = p2_stats.hp - p1_dmg
 			if p2_stats.hp < math.floor(p2_maxhp / 2) and p2_blood == 0 then
 				p2_blood = 1
 				append = " " .. p2_nick .. " is now bloodied!"
 			end
-			irc_msg("#duel", p1_nick .. " hits " .. p2_nick .. " for " .. p1_dmg .. " damage!"..append)
+			irc_msg("#duel", p1_nick .. p1_crit .. " hits " .. p2_nick .. " for " .. p1_dmg .. " damage!"..append)
 		else
 			irc_msg("#duel", p1_nick .. " misses a blow at " .. p2_nick .. ".")
 		end
 
-		if p2_roll > tonumber(p1_stats.armor) then
+		if p2_roll == 20 or p2_roll + p2_stats.attack > tonumber(p1_stats.armor) then
 			local append = ""
 			p1_stats.hp = p1_stats.hp - p2_dmg
 			if p1_stats.hp < math.floor(p1_maxhp / 2) and p1_blood == 0 then
 				p1_blood = 1
 				append = " " .. p1_nick .. " is now bloodied!"
 			end
-			irc_msg("#duel", p2_nick .. " hits " .. p1_nick .. " for " .. p2_dmg .. " damage!"..append)
+			irc_msg("#duel", p2_nick .. p2_crit .. " hits " .. p1_nick .. " for " .. p2_dmg .. " damage!"..append)
 		else
 			irc_msg("#duel", p2_nick .. " misses a blow at " .. p1_nick .. ".")
 		end
