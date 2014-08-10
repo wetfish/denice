@@ -138,12 +138,12 @@ function duel_callback(event, origin, params)
 		local p2_crit = ""
 
 		if p1_roll == 20 then
-			p1_dmg = 10 + p1_stats.damage
+			p1_dmg = 10 + p1_stats.damage + 1
 			p1_crit = " critically"
 		end
 
 		if p2_roll == 20 then
-			p2_dmg = 10 + p1_stats.damage
+			p2_dmg = 10 + p1_stats.damage + 1
 			p2_crit = " critically"
 		end
 
