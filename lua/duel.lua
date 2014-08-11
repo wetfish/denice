@@ -15,7 +15,7 @@ function duelchar_callback(event, origin, params)
 	
 	local class = args[1]:upper()
 	local spec  = args[2]:upper()
-	local title = args[3]
+	local title = cleanSpace(args[3])
 
 	local stats = sql_query_fetch("SELECT `ac`,`attack`,`damage`,`hp` FROM `duelclasses` WHERE `class`='" .. sql_escape(class) .. "'")
 	if stats == nil or #stats == 0 then
@@ -58,7 +58,7 @@ function duelhelp_callback(event, origin, params)
 	irc_msg(origin, "You use it to select a class, a specialty, and a title for your character.")
 	irc_msg(origin, "Each class comes with base ARMOR, ATTACK, and DAMAGE stats, as well as an amount of HEALTH points (HP).")
 	irc_msg(origin, "Your specialty allows you to increase one of these stats by +3.")
-	irc_msg(origin, "Your title is displayed after your nick, e.g. '"..origin.." the Wise'.")
+	irc_msg(origin, "Your title is displayed after your nick, e.g. if you enter 'the Wise' you will be called '"..origin..", the Wise'.")
 	irc_msg(origin, "The character creation syntax is: !duelchar <class> <specialty> <character title>")
 	irc_msg(origin, "The classes you can choose are: ")
 	for i,c in pairs(class_t) do
@@ -71,7 +71,7 @@ function duelhelp_callback(event, origin, params)
 	irc_msg(origin, "You may only duel someone who has also made a character.")
 	irc_msg(origin, "To do so, simply use the command !duel <nick>")
 	irc_msg(origin, "The outcome of the battle is decided by random chance combined with the players' stats.")
-	irc_msg(origin, "A turn-by-turn description of the battle will be shown in #duel, but the outcome will also displayed in the channel the battle was initiated in.")
+	irc_msg(origin, "A turn-by-turn description of the battle will be shown in "..get_config("bot:duelchan")..", but the outcome will also displayed in the channel the battle was initiated in.")
 	irc_msg(origin, "The characters will fight to the death and the winner will gain +1 XP. However, no XP is awarded for defeating an opponent less than half your level.")
 	irc_msg(origin, "Both characters will be restored to full HEALTH after the fight.")
 	irc_msg(origin, " ")
@@ -122,7 +122,7 @@ function duel_callback(event, origin, params)
 	p1_blood = 0
 	p2_blood = 0
 
-	irc_msg("#duel", p1_nick .. ", " .. p1_stats.title .. ", (level " .. p1_stats.level .. " " .. p1_stats.class .. ") has challenged " .. p2_nick .. ", " .. p2_stats.title ..
+	irc_msg(get_config("bot:duelchan"), p1_nick .. ", " .. p1_stats.title .. ", (level " .. p1_stats.level .. " " .. p1_stats.class .. ") has challenged " .. p2_nick .. ", " .. p2_stats.title ..
 		", (level " .. p2_stats.level .. " " .. p2_stats.class .. ") to a duel!")
 
 	while tonumber(p1_stats.hp) > 0 and tonumber(p2_stats.hp) > 0 do
@@ -152,9 +152,9 @@ function duel_callback(event, origin, params)
 				p2_blood = 1
 				append = " " .. p2_nick .. " is now bloodied!"
 			end
-			irc_msg("#duel", p1_nick .. p1_crit .. " hits " .. p2_nick .. " for " .. p1_dmg .. " damage!"..append)
+			irc_msg(get_config("bot:duelchan"), p1_nick .. p1_crit .. " hits " .. p2_nick .. " for " .. p1_dmg .. " damage!"..append)
 		else
-			irc_msg("#duel", p1_nick .. " misses a blow at " .. p2_nick .. ".")
+			irc_msg(get_config("bot:duelchan"), p1_nick .. " misses a blow at " .. p2_nick .. ".")
 		end
 
 		if p2_roll == 20 or p2_roll + p2_stats.attack > tonumber(p1_stats.armor) then
@@ -164,9 +164,9 @@ function duel_callback(event, origin, params)
 				p1_blood = 1
 				append = " " .. p1_nick .. " is now bloodied!"
 			end
-			irc_msg("#duel", p2_nick .. p2_crit .. " hits " .. p1_nick .. " for " .. p2_dmg .. " damage!"..append)
+			irc_msg(get_config("bot:duelchan"), p2_nick .. p2_crit .. " hits " .. p1_nick .. " for " .. p2_dmg .. " damage!"..append)
 		else
-			irc_msg("#duel", p2_nick .. " misses a blow at " .. p1_nick .. ".")
+			irc_msg(get_config("bot:duelchan"), p2_nick .. " misses a blow at " .. p1_nick .. ".")
 		end
 
 	end
@@ -224,8 +224,8 @@ function duel_callback(event, origin, params)
 		battle_str = "The match ends in a draw!"
 	end
 
-	irc_msg("#duel", battle_str)
-	if params[1] ~= "#duel" then
+	irc_msg(get_config("bot:duelchan"), battle_str)
+	if params[1] ~= get_config("bot:duelchan") then
 		irc_msg(params[1], battle_str)
 	end
 
@@ -294,6 +294,11 @@ function duellist_callback(event, origin, params)
 
 	if params[1] == get_config("bot:nick") then
 		params[1] = origin
+	end
+
+	if params[1] ~= get_config("bot:duelchan") and params[1] ~= origin then
+		irc_msg(params[1], origin.." : please use !duellist only in "..get_config("bot:duelchan").." or by PM")
+		return
 	end
 
 	for i,v in pairs(t) do
