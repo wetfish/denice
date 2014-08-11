@@ -30,8 +30,6 @@ function duelchar_callback(event, origin, params)
 		stats.attack = stats.attack + 3
 	elseif spec == "DAMAGE" then
 		stats.damage = stats.damage + 3
-	elseif spec == "HEALTH" then
-		stats.hp = stats.hp + 3
 	else
 		irc_msg(params[1], "The specialty you selected is not valid")
 		return
@@ -58,7 +56,7 @@ function duelhelp_callback(event, origin, params)
 	irc_msg(origin, "== CREATING A CHARACTER ==")
 	irc_msg(origin, "To duel, you must make a character with the !duelchar command.")
 	irc_msg(origin, "You use it to select a class, a specialty, and a title for your character.")
-	irc_msg(origin, "Each class comes with base ARMOR, ATTACK, DAMAGE, and HEALTH stats.")
+	irc_msg(origin, "Each class comes with base ARMOR, ATTACK, and DAMAGE stats, as well as an amount of HEALTH points (HP).")
 	irc_msg(origin, "Your specialty allows you to increase one of these stats by +3.")
 	irc_msg(origin, "Your title is displayed after your nick, e.g. '"..origin.." the Wise'.")
 	irc_msg(origin, "The character creation syntax is: !duelchar <class> <specialty> <character title>")
@@ -66,7 +64,7 @@ function duelhelp_callback(event, origin, params)
 	for i,c in pairs(class_t) do
 		irc_msg(origin, "  - " .. c.class .. " (" .. c.ac .. " ARMOR / " .. c.attack .. " ATTACK / " .. c.damage .. " DAMAGE / " .. c.hp .. " HEALTH) ")
 	end
-	irc_msg(origin, "The specialties you can choose are: ARMOR ATTACK DAMAGE HEALTH")
+	irc_msg(origin, "The specialties you can choose are: ARMOR ATTACK DAMAGE")
 	irc_msg(origin, " ")
 
 	irc_msg(origin, "== DUELING ==")
@@ -268,18 +266,17 @@ function duellevel_callback(event, origin, params)
 			elseif params[2] == "DAMAGE" then
 				column = "damage"
 				stats.damage = stats.damage + 1
-			elseif params[2] == "HEALTH" then
-				column = "hp"
-				stats. hp = stats.hp + 1
 			else
 				irc_msg(params[1], origin .. " : that is not a valid stat to level up")
 			end
+
+			stats.hp = stats.hp + 2
 
 			if column ~= "" then
 				stats.xp = stats.xp - req_xp
 				stats.level = stats.level + 1
 				req_xp = math.floor((stats.level - 1) * 2) + 10
-				sql_fquery("UPDATE `duelchars` SET `level`=`level`+1, `xp`='"..stats.xp.."', `"..column.."`=`"..column.."`+1 WHERE `nick`='"..sql_escape(origin).."'")
+				sql_fquery("UPDATE `duelchars` SET `level`=`level`+1, `xp`='"..stats.xp.."', `hp`=`hp`+2, `"..column.."`=`"..column.."`+1 WHERE `nick`='"..sql_escape(origin).."'")
 				irc_msg(params[1], origin .. ", " .. stats.title .. " - level " .. stats.level .. " " .. stats.class .. " - " ..
 					stats.armor .. " ARMOR / " .. stats.attack .. " ATTACK / " ..  stats.damage .. " DAMAGE / " .. stats.hp .. " HEALTH - " ..
 					stats.xp .. "/" .. req_xp .. " XP")
