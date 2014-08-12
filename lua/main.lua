@@ -19,7 +19,9 @@ end
 add_lib_dir("libs/LuaXml")
 add_lib_dir("libs/luasocket")
 add_lib_dir("libs/json")
+add_lib_dir("libs/luasec")
 add_lib_dir("libs/lpeg-0.12")
+add_lib_dir("libs/luabase64")
 
 -- load bot scripts
 dofile("lua/functions.lua")
@@ -42,3 +44,5 @@ dofile("lua/stats.lua")
 dofile("lua/seen.lua")
 dofile("lua/roll.lua")
 dofile("lua/duel.lua")
+dofile("lua/imgur.lua")
+dofile("lua/comic.lua")

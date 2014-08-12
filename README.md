@@ -17,6 +17,9 @@ Additionally, the scripts require some Lua modules:
 * luasocket 3.0 rc1
 * luaxml
 * luajson (also depends on lpeg)
+* luasec
+
+The comic script requires spittoon, and some custom configuration. Get spittoon at https://github.com/statico/spittoon/ and have fun figuring out how to make it work.
 
 The you can probably find the MySQL and Lua stuff in your package manager, but for the other crap
 just drop them in ./libs and make them in there, and our makefile should find them. You
@@ -31,6 +34,7 @@ Dependency links (if you don't know how to google):
 * luaxml: http://viremo.eludi.net/LuaXML/
 * luajson: http://luaforge.net/projects/luajson/
 * lpeg: http://www.inf.puc-rio.br/~roberto/lpeg/
+* luasec: https://github.com/brunoos/luasec
 
 Some things that are helpful and you might want to do:
 * Patch libircclient to use a larger send buffer (recommend ~4KB, rather than the 1KB default)
