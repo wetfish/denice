@@ -188,7 +188,7 @@ function duel_callback(event, origin, params)
 
 	if tonumber(p1_stats.hp) > tonumber(p2_stats.hp) then
 		battle_str = p1_nick .. ", " .. p1_stats.title .. ", has defeated " .. p2_nick .. " by " .. (p1_stats.hp - p2_stats.hp) .. " HP!"
-		if tonumber(p1_stats.level) <= tonumber(p2_stats.level) + 3 and tonumber(p1_stats.xp) < 10+2*(p1_stats.level-1) then
+		if tonumber(p1_stats.level) <= tonumber(p2_stats.level) + 3 and tonumber(p1_stats.xp) < 2*(10+2*(p1_stats.level-1)) then
 			p1_stats.xp = p1_stats.xp + 1
 			battle_str = battle_str .. " " .. p1_nick .. " now has " .. p1_stats.xp .. "/" .. math.floor(10+(p1_stats.level-1)*2) .. " XP."
 			sql_fquery("UPDATE `duelchars` SET `xp`=`xp`+1 WHERE `nick`='"..sql_escape(p1_nick).."'")
@@ -205,7 +205,7 @@ function duel_callback(event, origin, params)
 		end
 	elseif tonumber(p1_stats.hp) < tonumber(p2_stats.hp) then
 		battle_str = p2_nick .. ", " .. p2_stats.title .. ", has defeated " .. p1_nick .. " by " .. (p2_stats.hp - p1_stats.hp) .. " HP!"
-		if tonumber(p2_stats.level) <= tonumber(p1_stats.level) + 3 and tonumber(p2_stats.xp) < 10+2*(p2_stats.level-1) then
+		if tonumber(p2_stats.level) <= tonumber(p1_stats.level) + 3 and tonumber(p2_stats.xp) < 2*(10+2*(p2_stats.level-1)) then
 			p2_stats.xp = p2_stats.xp + 1
 			battle_str = battle_str .. " " .. p2_nick .. " now has " .. p2_stats.xp .. "/" .. math.floor(10+(p2_stats.level-1)*2) .. " XP."
 			sql_fquery("UPDATE `duelchars` SET `xp`=`xp`+1 WHERE `nick`='"..sql_escape(p2_nick).."'")
