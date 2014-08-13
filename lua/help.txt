@@ -16,7 +16,6 @@
    * [B]!bigrainbow [U]phrase[/U][/B] - show a big colorful rendition
    * [B]!biggerrainbow [U]phrase[/U][/B] - show a huge colorful rendition
    * [B]!dickbutt [U]phrase[/U][/B] - show a large piece of ascii art
-
  
 [B]-> [U]Quote functions[/U][/B]
    * [B]!quote[/B] - display a random quote
@@ -48,5 +47,10 @@
    * [B]!myartists [U]person[/U][/B] - show their top artists
    * [B]!myartists [U]period[/U] [U]person[/U][/B] - show top artists over specific period
                                 [U]period[/U] = ( -7day | -3month | -6month | -overall )
-                                 
+                                   
+[B]-> [U]Misc functions[/U][/B]
+   * [B]!duelhelp[/B] - display information about the duel system
+   * [B]!stats[/B] - display statistics from the database
+   * [B]!setgreeting [U]greeting message[/U][/B] - set a greeting message for when you enter the channel (blank to unset)
+  
 [B]* End of documentation.[/B]
