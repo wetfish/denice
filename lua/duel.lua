@@ -82,6 +82,17 @@ function duelhelp_callback(event, origin, params)
 	irc_msg(origin, "To do so, use !duellevel <stat> (the stats are the same as those you can choose as specialties.)")
 	irc_msg(origin, "You can check your level progress by performing !duellevel without a stat as an argument.")	
 	irc_msg(origin, " ")
+
+	irc_msg(origin, "== COMBAT SYSTEM ==")
+	irc_msg(origin, "Whoever issues the !duel command is considered the attacker, and their opponent is the defender.")
+	irc_msg(origin, "The attacker always gets the first swing, but the defender has an opportunity to attack one more time after being reduced to 0 HP.")
+	irc_msg(origin, "Combat uses D&D-ish rules, where an attack hits if your d20 roll plus your ATTACK stat beats your opponent's ARMOR rating.")
+	irc_msg(origin, "If the attack hits, you do damage equal to d10 plus your DAMAGE stat, and this damage is deducted from your opponent's HEALTH.")
+	irc_msg(origin, "A natural 20 on the attack roll is a critical hit, ignoring the ARMOR rating and dealing 10 + DAMAGE with a extra +1 crit bonus.")
+	irc_msg(origin, "A duel is over when a player goes below 0 HP (and after the defender takes their last attack, if necessary).")
+	irc_msg(origin, "Since it is possible for both players to go below 0 HP, the player with the highest HP after the duel is considered the winner.")
+	irc_msg(origin, "Rarely, both players will end up with the same negative HP value, and thus the duel will end in a draw.")
+	irc_msg(origin, " ")
 end
 register_command("duelhelp", "duelhelp_callback")
 
