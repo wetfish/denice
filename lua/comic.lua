@@ -33,6 +33,6 @@ function comic_remember(event, origin, params)
 	end
 
 	comic_memory[#comic_memory+1] = {user=origin, message=params[2]}
-	print("comic memory has " .. (#comic_memory) .." entries")
+	--print("comic memory has " .. (#comic_memory) .." entries")
 end
 register_callback("CHANNEL", "comic_remember")
