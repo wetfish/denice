@@ -100,7 +100,7 @@ function duel_callback(event, origin, params)
 	local p1_nick = origin
 	local p2_nick = cleanSpace(params[2])
 
-	if p1_nick == p2_nick then
+	if p1_nick:lower() == p2_nick:lower() then
 		irc_msg(params[1], origin.." : you cannot duel yourself!")
 		return
 	end
