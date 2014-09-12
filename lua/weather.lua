@@ -75,7 +75,7 @@ function weather(zip,user,channel)
 			break
 		end
 	end
-	if r ~= nil then
-		irc_msg(channel,r)
-	end
+	--if r ~= nil then
+	--	irc_msg(channel,r)
+	--end
 end
