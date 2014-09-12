@@ -1,8 +1,10 @@
 function remember_callback(event, origin, params)
 	if event == "!remember" then
-		remember(params[2], origin, params[1])
+		--remember(params[2], origin, params[1])
+		remember(params[2], origin, origin)
 	elseif event == "!forget" then
-		forget(params[2], origin, params[1])
+		--forget(params[2], origin, params[1])
+		forget(params[2], origin, origin)
 	end
 end
 register_command("remember", "remember_callback")
