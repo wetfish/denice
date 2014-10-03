@@ -105,8 +105,8 @@ function duel_callback(event, origin, params)
 		return
 	end
 
-	if duel_cooldown[origin] ~= nil and duel_cooldown[origin] > os.time() - 60 then
-		irc_msg(params[1], origin.. " : you must wait " .. (60 - (os.time() - duel_cooldown[origin])) .. " seconds to duel again.")
+	if duel_cooldown[origin] ~= nil and duel_cooldown[origin] > os.time() - 15 then
+		irc_msg(params[1], origin.. " : you must wait " .. (15 - (os.time() - duel_cooldown[origin])) .. " seconds to duel again.")
 		return
 	end
 
@@ -155,7 +155,7 @@ function duel_callback(event, origin, params)
 			end
 
 			if p2_roll == 20 then
-				p2_dmg = 10 + p1_stats.damage + 1
+				p2_dmg = 10 + p2_stats.damage + 1
 				p2_crit = " critically"
 			end
 
