@@ -1,6 +1,8 @@
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
-CREATE TABLE IF NOT EXISTS `dictionary` (
+DROP TABLE IF EXISTS `dictionary`;
+CREATE TABLE `dictionary` (
   `Index` int(11) NOT NULL AUTO_INCREMENT,
   `Word1` varchar(128) NOT NULL,
   `Word2` varchar(128) NOT NULL,
@@ -13,7 +15,8 @@ CREATE TABLE IF NOT EXISTS `dictionary` (
   FULLTEXT KEY `Word1_2` (`Word1`,`Word2`,`Word3`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `duelchars` (
+DROP TABLE IF EXISTS `duelchars`;
+CREATE TABLE `duelchars` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nick` varchar(16) NOT NULL,
   `title` varchar(32) NOT NULL,
@@ -27,7 +30,8 @@ CREATE TABLE IF NOT EXISTS `duelchars` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `duelclasses` (
+DROP TABLE IF EXISTS `duelclasses`;
+CREATE TABLE `duelclasses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `class` varchar(16) NOT NULL,
   `ac` int(11) NOT NULL,
@@ -37,7 +41,8 @@ CREATE TABLE IF NOT EXISTS `duelclasses` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `duelstats` (
+DROP TABLE IF EXISTS `duelstats`;
+CREATE TABLE `duelstats` (
   `index` int(11) NOT NULL AUTO_INCREMENT,
   `player1` varchar(16) NOT NULL,
   `player2` varchar(16) NOT NULL,
@@ -46,29 +51,34 @@ CREATE TABLE IF NOT EXISTS `duelstats` (
   PRIMARY KEY (`index`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `greeting` (
+DROP TABLE IF EXISTS `greeting`;
+CREATE TABLE `greeting` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Nick` varchar(32) NOT NULL,
   `Greeting` text,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `quotes` (
+DROP TABLE IF EXISTS `quotes`;
+CREATE TABLE `quotes` (
   `Index` int(11) NOT NULL AUTO_INCREMENT,
   `Quote` varchar(512) NOT NULL,
   `Time` int(11) NOT NULL,
   `Delete` tinyint(1) NOT NULL,
+  `Blame` varchar(16) NOT NULL,
   PRIMARY KEY (`Index`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `remember` (
+DROP TABLE IF EXISTS `remember`;
+CREATE TABLE `remember` (
   `Index` int(11) NOT NULL AUTO_INCREMENT,
   `Title` text NOT NULL,
   `Content` text NOT NULL,
   PRIMARY KEY (`Index`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `seen` (
+DROP TABLE IF EXISTS `seen`;
+CREATE TABLE `seen` (
   `nick` varchar(31) NOT NULL,
   `timestamp` int(11) NOT NULL,
   `event` varchar(16) NOT NULL,
