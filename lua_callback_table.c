@@ -10,11 +10,11 @@ CBENTRY** callback_table;
 
 // Hash function for our hash table
 int cbtable_hash(const char* type){
-	int acc = 0;
-	const char* p;
-	for(p = type; *p; p++)
-		acc += *p;
-	return acc % LUA_CALLBACK_TABLE_SIZE;
+	unsigned acc = 0;
+	const unsigned char* p;
+	for(p = (const unsigned char*) type; *p; p++)
+		acc = (acc + *p) % LUA_CALLBACK_TABLE_SIZE;
+	return acc;
 }
 
 // Alloc memory and initialize hash table
