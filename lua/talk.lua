@@ -50,8 +50,14 @@ end
 
 -- parses incoming messages to populate dictionary
 function talk_parse(event, origin, params)
+	local parseignore = str_split(get_config("bot:parseignore"),",")
 	local word1,word2
 	local words = str_split(params[2], " ")
+	for i=1,(#parseignore) do
+		if parseignore[i] == origin then
+			return
+		end
+	end
 	for i=1,(#words+1) do
 		local word = words[i]
 		
