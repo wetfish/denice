@@ -57,7 +57,7 @@ function biggerrainbow(word,user,target)
         if word:len() > 128 then
                 word=user.." is a big gay fag!"
         end
-        local f = io.popen("toilet -f mono9 -F gay --irc -w 80 > /tmp/denice_rainbow","w")
+        local f = io.popen("toilet -f mono9 -F gay --irc -w 90 > /tmp/denice_rainbow","w")
         f:write(word)
         f:close()
         local f = io.open("/tmp/denice_rainbow", "r")
