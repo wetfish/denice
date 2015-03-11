@@ -105,13 +105,13 @@ function duel_callback(event, origin, params)
 		return
 	end
 
-	if duel_cooldown[p1_nick] ~= nil and duel_cooldown[p1_nick] > os.time() then
-		irc_msg(params[1], p1_nick.. " : you must wait " .. (-1 * (os.time() - duel_cooldown[p1_nick])) .. " seconds to duel again.")
+	if duel_cooldown[p1_nick:lower()] ~= nil and duel_cooldown[p1_nick:lower()] > os.time() then
+		irc_msg(params[1], p1_nick.. " : you must wait " .. (-1 * (os.time() - duel_cooldown[p1_nick:lower()])) .. " seconds to duel again.")
 		return
 	end
 
-	if duel_cooldown[p2_nick] ~= nil and duel_cooldown[p2_nick] > os.time() then
-		irc_msg(params[1], p1_nick.. " : "..p2_nick.." must wait " .. (-1 * (os.time() - duel_cooldown[p2_nick])) .. " seconds to duel again.")
+	if duel_cooldown[p2_nick:lower()] ~= nil and duel_cooldown[p2_nick:lower()] > os.time() then
+		irc_msg(params[1], p1_nick.. " : "..p2_nick.." must wait " .. (-1 * (os.time() - duel_cooldown[p2_nick:lower()])) .. " seconds to duel again.")
 		return
 	end
 
@@ -196,8 +196,8 @@ function duel_callback(event, origin, params)
 	local p1_diff = p1_maxhp - p1_stats.hp
 	local p2_diff = p2_maxhp - p2_stats.hp
 
-	duel_cooldown[p1_nick] = os.time() + 2*p1_diff
-	duel_cooldown[p2_nick] = os.time() + 2*p2_diff
+	duel_cooldown[p1_nick:lower()] = os.time() + 2*p1_diff
+	duel_cooldown[p2_nick:lower()] = os.time() + 2*p2_diff
 
 	local stat_row = sql_query_fetch("SELECT * FROM `duelstats` WHERE (`player1`='"..sql_escape(p1_nick).."' AND `player2`='"..sql_escape(p2_nick).."') OR (`player2`='"..sql_escape(p1_nick).."' AND `player1`='"..sql_escape(p2_nick).."')")
 	if stat_row == nil or #stat_row == 0 then
