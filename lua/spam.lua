@@ -30,7 +30,7 @@ function spam(word,user,target)
 end
 
 function rainbow(word,user,target)
-	local f = io.popen("toilet -f term -F gay --irc -w 80 > /tmp/denice_rainbow","w")
+	local f = io.popen("toilet -f term -F gay --irc -w " .. get_config("bot:spamwidth")  .. " > /tmp/denice_rainbow","w")
 	f:write(word)
 	f:close()
 	local f = io.open("/tmp/denice_rainbow", "r")
