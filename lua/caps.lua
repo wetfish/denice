@@ -8,9 +8,11 @@ function caps_callback(event, origin, params)
 	
 	-- determine if its caps lock
 	local this_is_caps = false
-	if params[2]:upper() == params[2] and params[2]:lower() ~= params[2] then
-		this_is_caps = true
-	end
+        if params[2]:upper() == params[2] and params[2]:lower() ~= params[2] then
+                if params[2] ~= ":P" and params[2] ~= ":D" then
+                        this_is_caps = true
+                end
+        end
 	
 	-- increment or decrement entry
 	if this_is_caps and params[2]:len() > 3 then
