@@ -1,4 +1,12 @@
+spam_cooldown = {}
+
 function spam_callback(event, origin, params)
+
+	if spam_cooldown[origin] ~= nil and spam_cooldown[origin] > os.time() - 120 then
+		irc_msg(params[1], "Don't get too excited, " .. origin)
+		return
+	end
+
 	if event == "!spam" then
 		spam(params[2], origin, params[1])
 	elseif event == "!rainbow" then
@@ -10,6 +18,9 @@ function spam_callback(event, origin, params)
 	elseif event == "!warning" then
 		warning(params[2], origin, params[1])
 	end
+
+	spam_cooldown[origin] = os.time()
+
 end
 register_command("spam", "spam_callback")
 register_command("rainbow", "spam_callback")
