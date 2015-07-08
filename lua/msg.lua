@@ -34,6 +34,9 @@ function message_callback(event, origin, params)
 		if msg_parts[1] == "!part" and msg_parts[2] ~= nil then
 			irc_msg(send_to, "ok :(")
 			irc_part(msg_parts[2])
+		elseif msg_parts[1] == "!kick" then
+			kk = str_split(msg_parts[2], " ")
+			irc_kick(kk[1],kk[2])
 		elseif msg_parts[1] == "!join" and msg_parts[2] ~= nil then
 			irc_join(msg_parts[2])
 		elseif msg_parts[1] == "!recent" then
