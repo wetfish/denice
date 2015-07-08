@@ -7,13 +7,15 @@ function spam_callback(event, origin, params)
 		bigrainbow(params[2], origin, params[1])
 	elseif event == "!biggerrainbow" then
 		biggerrainbow(params[2], origin, params[1])
+	elseif event == "!warning" then
+		warning(params[2], origin, params[1])
 	end
 end
 register_command("spam", "spam_callback")
 register_command("rainbow", "spam_callback")
 register_command("bigrainbow", "spam_callback")
 register_command("biggerrainbow", "spam_callback")
-
+register_command("warning", "spam_callback")
 
 function spam(word,user,target)
 	local buffer,buffer2 = "",""
@@ -68,3 +70,6 @@ function biggerrainbow(word,user,target)
         f:close()
 end
 
+function warning(word,user,target)
+	irc_msg(target, irc_color("[B][I][U]/!\\[/U] " .. word .. " [U]/!\\[/U][/I][/B]"))
+end
