@@ -10,7 +10,9 @@ function message_callback(event, origin, params)
 		send_to = origin
 	else
 		-- reply to channel messages with probability from config
-		if math.random(1, 100) < get_config("bot:talk_rate")*100 and not no_talk(send_to) then
+		-- config value is a percent (5 = 5% reply rate)
+		-- multiply by 10 to allow as low as 0.1% reply rate
+		if math.random(1, 1000) <= get_config("bot:talk_rate")*10 and not no_talk(send_to) then
 			if math.random(1, 100) > 50 then
 				talk(send_to, nil, get_recent_word(params[1]))
 			else
