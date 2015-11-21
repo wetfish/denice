@@ -36,6 +36,12 @@ function spam(word,user,target)
 			while c1==c2 do
 				c2 = math.random(0,15)
 			end
+			if c1 < 10 then
+				c1 = "0" .. c1
+			end
+			if c2 < 10 then
+				c2 = "0" .. c2
+			end
 			buffer2 = buffer2 .. string.char(3) .. c1 .. "," .. c2 .. v .. string.char(15) .. " "
 		end
 	end
